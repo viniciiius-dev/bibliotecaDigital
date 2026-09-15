@@ -1,11 +1,14 @@
 package com.viniciiiusdev.fateclivros.service.impl;
 
 import com.viniciiiusdev.fateclivros.dtos.AddReservationDTO;
+import com.viniciiiusdev.fateclivros.entity.Reservation;
 import com.viniciiiusdev.fateclivros.service.BookService;
 import com.viniciiiusdev.fateclivros.service.ReservationService;
 import com.viniciiiusdev.fateclivros.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -31,5 +34,30 @@ public class ReservationServiceImpl implements ReservationService {
 //        bookService.save(book);
 //        userService.save(user);
 // depois arrumo
+    }
+
+    @Override
+    public void cancelReservation(Long reservationId) {
+
+    }
+
+    @Override
+    public void completeReservation(Long reservationId) {
+
+    }
+
+    @Override
+    public void markAsReadyForPickup(Long reservationId) {
+
+    }
+
+    @Override
+    public Reservation getReservationById(Long reservationId) {
+        return null;
+    }
+
+    @Override
+    public List<Reservation> getReservationsByUser(Long userId) {
+        return List.of();
     }
 }
