@@ -22,7 +22,6 @@ public class UserServiceImplementation implements UserService {
     public void addUser(AddUserDTO addUserDTO){
         User newUser = new User(addUserDTO.name(), addUserDTO.registroAluno());
         userRepository.saveAndFlush(newUser);
-
     }
 }
 
