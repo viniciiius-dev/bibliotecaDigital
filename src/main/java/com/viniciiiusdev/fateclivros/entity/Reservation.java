@@ -55,8 +55,8 @@ public class Reservation {
     }
 
     public void cancel(){
-        if (!validateIfReservationCanBeCancelled()) {
-            throw new IllegalStateException("Reservation cannot be cancelled.");
+        if (!canBeCancelled()) {
+            throw new IllegalStateException("Não é possível cancelar uma reserva no status: " + reservationStatus);
         }
         reservationStatus = ReservationStatus.CANCELLED;
     }
