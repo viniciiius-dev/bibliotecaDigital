@@ -9,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-import java.util.List;
-
 @Service
 public class ReservationServiceImpl implements ReservationService {
     private final UserService userService;
@@ -37,28 +35,5 @@ public class ReservationServiceImpl implements ReservationService {
 // depois arrumo
     }
 
-    @Override
-    public void cancelReservation(Long reservationId) {
 
-    }
-
-    @Override
-    public void completeReservation(Long reservationId) {
-
-    }
-
-    @Override
-    public void markAsReadyForPickup(Long reservationId) {
-
-    }
-
-    @Override
-    public Reservation getReservationById(Long reservationId) {
-        return null;
-    }
-
-    @Override
-    public List<Reservation> getReservationsByUser(Long userId) {
-        return List.of();
-    }
 }

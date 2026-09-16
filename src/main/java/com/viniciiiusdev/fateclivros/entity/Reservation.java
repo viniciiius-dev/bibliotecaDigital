@@ -8,15 +8,15 @@ import java.time.LocalDateTime;
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reservationId;
+    private long reservationId;
 
     protected Reservation(){}
 
-    public Reservation(User user, Book book) {
+    public Reservation(User user, Book book, ReservationStatus reservationStatus, LocalDateTime expirationDate) {
         this.user = user;
         this.book = book;
-        this.reservationStatus = ReservationStatus.ACTIVE;
-        this.expirationDate = LocalDateTime.now().plusDays(30);
+        this.reservationStatus = reservationStatus;
+        this.expirationDate = expirationDate;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -27,6 +27,10 @@ public class Reservation {
     @JoinColumn(name = "bookId", nullable = false)
     private Book book;
 
+    private enum availableStatus {
+        ACTIVE, READY_FOR_PICKUP, FULFILLED, CANCELLED, COMPLETED
+    }
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus;
@@ -34,7 +38,7 @@ public class Reservation {
     @Column(nullable = false)
     private LocalDateTime expirationDate;
 
-    public Long getReservationId() {
+    public long getReservationId() {
         return reservationId;
     }
 
@@ -55,16 +59,10 @@ public class Reservation {
     }
 
     public void cancel(){
-        if (!canBeCancelled()) {
-            throw new IllegalStateException("Não é possível cancelar uma reserva no status: " + reservationStatus);
-        }
-        reservationStatus = ReservationStatus.CANCELLED;
-    }
-
-    public boolean canBeCancelled(){
-        if (reservationStatus == ReservationStatus.CANCELLED || reservationStatus == ReservationStatus.COMPLETED || reservationStatus == ReservationStatus.FULFILLED){
-            return false;
-        }
-        return true;
+//        if (reservationStatus == ReservationStatus.COMPLETED){
+//            throw new IllegalStateException("Não se pode cancelar uma reserva completada.");
+//        }
+//        reservationStatus = ReservationStatus.CANCELLED;
+        // codigo com erro
     }
 }

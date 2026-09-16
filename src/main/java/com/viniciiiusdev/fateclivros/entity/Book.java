@@ -34,8 +34,6 @@ public class Book {
     @Column(nullable = false, unique = true)
     private String isbn;
 
-    @Column(nullable = false)
-    private int bookStock;
 
 
     public Book() {
@@ -101,22 +99,8 @@ public class Book {
         this.name = name;
     }
 
-
-    public int getBookStock() {
-        return bookStock;
-    }
-
-    public boolean reserve(){
-        if (bookStock > 0){
-            this.bookStock--;
-            return true;
-        }
-        return false;
-    }
-
-    public boolean release(){
-        bookStock += 1;
-        return true;
+    public void setBookId(Long bookId) {
+        this.bookId = bookId;
     }
 
     @Override
