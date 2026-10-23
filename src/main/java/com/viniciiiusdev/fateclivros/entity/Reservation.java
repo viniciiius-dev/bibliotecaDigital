@@ -8,15 +8,15 @@ import java.time.LocalDateTime;
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long reservationId;
+    private Long reservationId;
 
     protected Reservation(){}
 
-    public Reservation(User user, Book book, ReservationStatus reservationStatus, LocalDateTime expirationDate) {
+    public Reservation(User user, Book book) {
         this.user = user;
         this.book = book;
-        this.reservationStatus = reservationStatus;
-        this.expirationDate = expirationDate;
+        this.reservationStatus = ReservationStatus.ACTIVE;
+        this.expirationDate = LocalDateTime.now().plusDays(30);
     }
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -27,10 +27,6 @@ public class Reservation {
     @JoinColumn(name = "bookId", nullable = false)
     private Book book;
 
-    private enum availableStatus {
-        ACTIVE, READY_FOR_PICKUP, FULFILLED, CANCELLED, COMPLETED
-    }
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus;
@@ -38,7 +34,7 @@ public class Reservation {
     @Column(nullable = false)
     private LocalDateTime expirationDate;
 
-    public long getReservationId() {
+    public Long getReservationId() {
         return reservationId;
     }
 
@@ -59,10 +55,16 @@ public class Reservation {
     }
 
     public void cancel(){
-//        if (reservationStatus == ReservationStatus.COMPLETED){
-//            throw new IllegalStateException("Não se pode cancelar uma reserva completada.");
-//        }
-//        reservationStatus = ReservationStatus.CANCELLED;
-        // codigo com erro
+        if (!canBeCancelled()) {
+            throw new IllegalStateException("Não é possível cancelar uma reserva no status: " + reservationStatus);
+        }
+        reservationStatus = ReservationStatus.CANCELLED;
+    }
+
+    public boolean canBeCancelled(){
+        if (reservationStatus == ReservationStatus.CANCELLED || reservationStatus == ReservationStatus.COMPLETED || reservationStatus == ReservationStatus.FULFILLED){
+            return false;
+        }
+        return true;
     }
 }
