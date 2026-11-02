@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "Books")
+@Table(name = "book")
 public class Book {
 
     @Id
@@ -37,6 +37,10 @@ public class Book {
     @Column(nullable = false)
     private int bookStock;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private BookGenre genre;
+
 
     public Book() {
     }
@@ -47,6 +51,14 @@ public class Book {
 
     public String getName() {
         return name;
+    }
+
+    public BookGenre getGenre() {
+        return genre;
+    }
+
+    public void setGenre(BookGenre genre) {
+        this.genre = genre;
     }
 
     public String getAuthor() {

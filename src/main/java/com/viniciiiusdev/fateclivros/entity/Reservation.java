@@ -1,24 +1,18 @@
 package com.viniciiiusdev.fateclivros.entity;
 
+import com.viniciiiusdev.fateclivros.Exception.ReservationStatusException;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "reservation")
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationId;
 
     protected Reservation(){}
-
-    public Reservation(User user, Book book) {
-        this.user = user;
-        this.book = book;
-        this.reservationStatus = ReservationStatus.ACTIVE;
-        this.expirationDate = LocalDateTime.now().plusDays(30);
-    }
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
@@ -31,8 +25,14 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus;
 
-    @Column(nullable = false)
     private LocalDateTime expirationDate;
+
+    public Reservation(User user, Book book) {
+        this.user = user;
+        this.book = book;
+        this.reservationStatus = ReservationStatus.ATIVO;
+    }
+
 
     public Long getReservationId() {
         return reservationId;
@@ -58,13 +58,31 @@ public class Reservation {
         if (!canBeCancelled()) {
             throw new IllegalStateException("Não é possível cancelar uma reserva no status: " + reservationStatus);
         }
-        reservationStatus = ReservationStatus.CANCELLED;
+        reservationStatus = ReservationStatus.CANCELADO;
     }
 
     public boolean canBeCancelled(){
-        if (reservationStatus == ReservationStatus.CANCELLED || reservationStatus == ReservationStatus.COMPLETED || reservationStatus == ReservationStatus.FULFILLED){
-            return false;
+        return reservationStatus != ReservationStatus.CANCELADO && reservationStatus != ReservationStatus.COMPLETO && reservationStatus != ReservationStatus.LENDO;
+    }
+
+    public void complete(){
+        if (!canBeCompleted()){
+            throw new ReservationStatusException("Não é possível completar uma reserva no status: " + reservationStatus);
         }
-        return true;
+        reservationStatus = ReservationStatus.COMPLETO;
+    }
+
+    public boolean canBeCompleted(){
+        return reservationStatus == ReservationStatus.LENDO;
+    }
+
+    public void markAsReadyForPickup(){
+        if (reservationStatus == ReservationStatus.ATIVO){
+            reservationStatus = ReservationStatus.ESPERANDO_RETIRADA;
+            expirationDate = LocalDateTime.now().plusDays(7);
+        }
+        else{
+            throw new ReservationStatusException("Uma reserva precisa ter status ATIVO para seu status ser trocado para ESPERANDO_RETIRADA");
+        }
     }
 }

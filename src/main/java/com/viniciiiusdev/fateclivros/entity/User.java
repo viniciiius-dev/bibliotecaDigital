@@ -2,10 +2,12 @@ package com.viniciiiusdev.fateclivros.entity;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "user")
 public class User {
 
 
@@ -20,6 +22,14 @@ public class User {
     @Column(nullable = false, unique = true)
     private String registroAluno;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_favorites",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "book_id")
+    )
+    private Set<Book> favoriteBooks = new HashSet<>();
+
     public User() {
     }
     public User(String name, String registroAluno) {
@@ -27,11 +37,19 @@ public class User {
         this.registroAluno = registroAluno;
     }
 
-    public Long getId() {
+    public Set<Book> getFavoriteBooks() {
+        return favoriteBooks;
+    }
+
+    public void setFavoriteBooks(Set<Book> favoriteBooks) {
+        this.favoriteBooks = favoriteBooks;
+    }
+
+    public Long getUserId() {
         return userId;
     }
 
-    public void setId(Long id) {
+    public void setUserId(Long id) {
         this.userId = id;
     }
 
