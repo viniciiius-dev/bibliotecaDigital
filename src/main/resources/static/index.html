@@ -25,11 +25,11 @@
                 <p>Seja bem-vindo(a) a Biblioteca Digital.</p>
 
                 <!-- <form action="../assets/php/login.php" method="post" autocomplete="on"> esqueci a utilidade disso, vou checar depois -->
-
+                    <form action="/login" method="POST">
                     <div class="campo">
                         <span class="material-symbols-outlined">passkey</span>
 
-                        <input type="ra" name="login" id="ilogin" placeholder="Seu RA aqui:" autocomplete="on"
+                        <input type="text" name="username" id="ilogin" placeholder="Seu RA aqui:" autocomplete="on"
                             required maxlength="13">
 
                         <label for="ilogin">Login</label>
@@ -38,7 +38,7 @@
                     <div class="campo">
                         <span class="material-symbols-outlined">format_ink_highlighter</span>
 
-                        <input type="password" name="senha" id="isenha" placeholder="Sua Senha aqui:"
+                        <input type="password" name="password" id="isenha" placeholder="Sua Senha aqui:"
                             autocomplete="current-password" required minlength="8" maxlength="20">
 
                         <label for="isenha">Senha:</label>

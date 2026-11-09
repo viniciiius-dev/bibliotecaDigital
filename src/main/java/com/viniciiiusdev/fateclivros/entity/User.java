@@ -1,14 +1,16 @@
 package com.viniciiiusdev.fateclivros.entity;
 
 import jakarta.persistence.*;
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "tb_user")
+public class User implements UserDetails {
 
 
     @Id
@@ -21,6 +23,8 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String registroAluno;
+
+    private String password;
 
     @ManyToMany
     @JoinTable(
@@ -81,5 +85,21 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hashCode(registroAluno);
+    }
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_STUDENT"));
+    }
+
+    @Override
+    public @Nullable String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return registroAluno;
     }
 }
