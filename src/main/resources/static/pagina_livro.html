@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/styles_pagina-inicial.css" />
+    <title>Página livro</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+
+        main {
+            padding: 20px;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+    <header>
+
+        <nav>
+        </nav>
+    </header>
+
+    <main></main>
+    
+    <a href="pagina-inicial.html">Voltar</a>
+
+    <script>
+        const livro = JSON.parse(localStorage.getItem('livroSelecionado'));
+      
+            if (livro) {
+                document.title = livro.nome;
+                const main = document.querySelector('main');
+
+                const titulo = document.createElement('h1');
+                titulo.textContent = livro.nome;
+                main.appendChild(titulo);
+
+                const autor = document.createElement('p');
+                autor.textContent = `Autor: ${livro.autor}`;
+                main.appendChild(autor);
+
+                const sinopse = document.createElement('p');
+                sinopse.textContent = livro.sinopse;
+                main.appendChild(sinopse);
+                
+                const genero = document.createElement('p');
+                genero.textContent = `Gênero: ${livro.genero}`;
+                main.appendChild(genero);
+
+                const status = document.createElement('p');
+                status.textContent = `Status: ${livro.status}`;
+                main.appendChild(status);
+
+                const imagem = document.createElement('img');
+                imagem.src = livro.foto;
+                imagem.loading = 'lazy';
+                imagem.alt = `Capa de ${livro.nome}`;
+                main.appendChild(imagem);
+            }
+
+    </script>
+</body>
+</html>

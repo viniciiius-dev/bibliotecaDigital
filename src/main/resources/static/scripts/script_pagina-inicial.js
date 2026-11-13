@@ -1,12 +1,10 @@
 let conteudo_global = null;
 let nomes = [];
-const urlBase = document.currentScript.src;
 const body = document.body;
 
 async function PegarArquivo() {
   try {
-    const url = new URL("BD de teste de livros.js", urlBase);
-    const resposta = await fetch(url);
+    const resposta = await fetch("scripts/BD de teste de livros.json");
 
     const conteudo = await resposta.json();
 
@@ -57,6 +55,7 @@ for (let i = 0; i < generos.length; i++) {
     // Imagem do livro
     const img = document.createElement("img");
     img.src = livro.foto;
+    img.loading = 'lazy';
     img.alt = "Capa de " + livro.nome;
     img.classList.add("icone-pesquisa");
     quadrado.appendChild(img);
@@ -85,6 +84,24 @@ for (let i = 0; i < generos.length; i++) {
     quadrado.appendChild(statusLivro);
   }
 }
+
+//Clicar na imagem para exibir informações do livro
+const imagens = document.querySelectorAll('img');
+
+imagens.forEach(imagem => {
+  imagem.addEventListener('click', (evento) => {
+    const livroInfo = conteudo_global.find(l => l.foto === evento.target.src);
+    if (livroInfo) 
+    {
+      localStorage.setItem('livroSelecionado', JSON.stringify(livroInfo));
+      window.location.href = 'pagina_livro.html';
+    } 
+    else {
+      alert('Livro não encontrado.');
+    }
+  
+  });
+});
 
 //Pesquisa de livros
 document.getElementById("pesquisar").addEventListener("input", function() {

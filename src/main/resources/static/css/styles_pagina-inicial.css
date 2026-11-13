@@ -1,5 +1,8 @@
 body
 {
+    display: flex;
+    flex-direction: column;
+     min-height: 100vh;
     background-color: rgba(255, 225, 205, 0.212);
     font-family: Arial, sans-serif;
 }
@@ -31,6 +34,7 @@ input[type="text"]::placeholder {
 main
 {
     margin-top: 200px;
+    flex: 1;
 }
 
 .linhas
@@ -100,4 +104,5 @@ span
     text-align: center;
     box-shadow: 2px 4px 8px #00000044;
     list-style-type: none;
-}
+} 
+
