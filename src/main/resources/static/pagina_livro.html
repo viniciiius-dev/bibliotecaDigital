@@ -1,77 +1,191 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./css/styles_pagina-inicial.css" />
-    <title>Página livro</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
 
+      main {
+        margin: 60px auto;
+      }
+      #div_main {
+        display: flex;
+        gap: 20px;
+        height: 500px;
+        background-color: white;
+        font-size: 20px;
 
-        main {
-            padding: 20px;
-        }
+        text-align: center;
+        align-items: center;
+        padding: 0;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.603);
+        border-radius: 10px;
+        background-size: cover;
+      }
 
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            text-decoration: none;
-            color: #007BFF;
-        }
+      #div_texto {
+        width: 60%;
+      }
+
+      #div_img {
+        justify-content: center;
+        overflow: hidden;
+        height: 100%;
+        width: 40%;
+        background-color: rgba(4, 0, 116, 0.849);
+        align-content: center;
+        padding: 0;
+      }
+
+      img {
+        position: relative;
+        height: 90%;
+        width: auto;
+        object-fit: cover;
+      }
+
+      #sinopse {
+        font-weight: bold;
+        width: 70%;
+        height: 100%;
+        align-content: center;
+        margin: 20px auto;
+        border-radius: 10px;
+      }
+
+      button {
+        flex: 2;
+        border-radius: 5px;
+        justify-content: center;
+        width: 60%;
+        height: 40px;
+        border: none;
+        transition: 0.4s;
+        background-color: black;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        transition: background-color 0.5s ease;
+      }
+
+      button:hover {
+        background-color: #080299;
+      }
+
+      footer {
+        background-color: #050175;
+        gap: 20px;
+        display: flex;
+        height: 60px;
+        align-items: center;
+      }
+
+      a {
+        font-weight: bold;
+        font-size: 38px;
+
+        margin-top: 20px;
+        text-decoration: none;
+        color: white;
+      }
+
+      footer p {
+        position: absolute;
+        color: white;
+        right: 10px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-
-        <nav>
-        </nav>
+      <nav>
+        <a href="pagina-inicial.html">Página Inicial</a>
+      </nav>
     </header>
 
-    <main></main>
-    
-    <a href="pagina-inicial.html">Voltar</a>
+    <main>
+      <div id="div_main">
+        <div id="div_texto"></div>
+        <div id="div_img"></div>
+      </div>
+    </main>
+
+    <footer>
+      <p>Biblioteca Digital Fatec</p>
+    </footer>
 
     <script>
-        const livro = JSON.parse(localStorage.getItem('livroSelecionado'));
-      
-            if (livro) {
-                document.title = livro.nome;
-                const main = document.querySelector('main');
+      const livro = JSON.parse(localStorage.getItem("livroSelecionado"));
 
-                const titulo = document.createElement('h1');
-                titulo.textContent = livro.nome;
-                main.appendChild(titulo);
+      if (livro) {
+        document.title = livro.nome;
+        const main = document.getElementById("div_main");
+        const div_img = document.getElementById("div_img");
+        const div_texto = document.getElementById("div_texto");
 
-                const autor = document.createElement('p');
-                autor.textContent = `Autor: ${livro.autor}`;
-                main.appendChild(autor);
+        //main.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),url('${livro.foto}')`;
 
-                const sinopse = document.createElement('p');
-                sinopse.textContent = livro.sinopse;
-                main.appendChild(sinopse);
-                
-                const genero = document.createElement('p');
-                genero.textContent = `Gênero: ${livro.genero}`;
-                main.appendChild(genero);
+        const titulo = document.createElement("h1");
+        titulo.textContent = livro.nome;
+        div_texto.appendChild(titulo);
 
-                const status = document.createElement('p');
-                status.textContent = `Status: ${livro.status}`;
-                main.appendChild(status);
+        const sinopse = document.createElement("p");
+        sinopse.textContent = livro.sinopse;
+        sinopse.id = "sinopse";
+        div_texto.appendChild(sinopse);
 
-                const imagem = document.createElement('img');
-                imagem.src = livro.foto;
-                imagem.loading = 'lazy';
-                imagem.alt = `Capa de ${livro.nome}`;
-                main.appendChild(imagem);
-            }
+        const autor = document.createElement("p");
+        autor.textContent = `Autor: ${livro.autor}`;
+        autor.id = "autor";
+        div_texto.appendChild(autor);
 
+        const genero = document.createElement("p");
+        genero.textContent = `Gênero: ${livro.genero}`;
+        genero.id = "genero";
+        div_texto.appendChild(genero);
+
+        const status = document.createElement("p");
+        status.textContent = `Status: ${livro.status}`;
+        status.id = "status";
+        div_texto.appendChild(status);
+
+        const btn_salvar = document.createElement('button');
+        btn_salvar.id = "btn_salvar";
+        btn_salvar.textContent = "Salvar";
+
+        const btn_reservar = document.createElement('button');
+        btn_reservar.id = "btn_reservar";
+        btn_reservar.textContent = "Reservar";
+
+        div_texto.appendChild(btn_salvar);
+        div_texto.appendChild(btn_reservar);
+
+        const imagem = document.createElement("img");
+        imagem.src = livro.foto;
+        imagem.loading = "lazy";
+        imagem.alt = `Capa de ${livro.nome}`;
+        div_img.appendChild(imagem);
+        div_img.id = "div_img";
+
+        main.appendChild(div_texto);
+        main.appendChild(div_img);
+
+        if (status.textContent.toLowerCase() == "status: disponível") {
+          status.style.color = "green";
+        } else {
+          status.style.color = "red";
+        }
+      }
     </script>
-</body>
+  </body>
 </html>

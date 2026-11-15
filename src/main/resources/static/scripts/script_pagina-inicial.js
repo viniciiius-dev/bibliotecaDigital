@@ -61,6 +61,12 @@ for (let i = 0; i < generos.length; i++) {
     quadrado.classList.add("quadrados");
     linha.appendChild(quadrado);
 
+    //Ícone de salvar o livro
+    const icone_salvar = document.createElement('button');
+    icone_salvar.className = "btn_icone_salvar";
+    icone_salvar.id = livro.id;
+    quadrado.appendChild(icone_salvar)
+
     // Imagem do livro
     const img = document.createElement("img");
     img.src = livro.foto;
@@ -91,6 +97,7 @@ for (let i = 0; i < generos.length; i++) {
       statusLivro.style.backgroundImage = "linear-gradient(to right, rgb(255, 58, 58) 50%, rgb(255, 32, 118))";
     }
     quadrado.appendChild(statusLivro);
+
   }
 }
 
@@ -132,15 +139,52 @@ document.getElementById("pesquisar").addEventListener("input", function() {
     resultadosContainer.appendChild(resultadoItem);
   });
 
-  resultadosContainer.addEventListener("click", function (e) {
+  resultadosContainer.addEventListener("click", function (e) //Quando clicar no item
+  { 
       const itemClicado = e.target.closest("li");
+      console.log(itemClicado.textContent);
 
       if (itemClicado) {
-        document.getElementById("pesquisar").value = itemClicado.textContent.trim();
+        const livroInfo = conteudo_global.find(l => l.nome === itemClicado.textContent);
+        if (livroInfo) 
+        {
+          localStorage.setItem('livroSelecionado', JSON.stringify(livroInfo));
+          window.location.href = 'pagina_livro.html';
+        } 
+        else 
+          {
+          alert('Livro não encontrado.');
+        }
       }
     });
 });
 
+//Fazendo o ícone de salvar funcionar
 
+const btns_salvar = document.querySelectorAll('.btn_icone_salvar');
+
+btns_salvar.forEach(salvar => {
+  salvar.addEventListener('click', (e) => {
+    const livroInfo = conteudo_global.find(l => l.id == salvar.id);
+    if(livroInfo.status === "indisponível")
+    {
+      alert("Não é possível salvar pois o livro está indisponível");
+    }
+
+    else
+    {
+      alert("Dá pra salvar")
+      // SALVAR O LIVRO NA LISTA AQUI
+    }
+  
+  });
+});
+
+const footer = document.createElement("footer");
+body.appendChild(footer);
+
+const p_footer = document.createElement("p")
+p_footer.textContent = "Biblioteca Digital Fatec";
+footer.appendChild(p_footer);
 }
 main();

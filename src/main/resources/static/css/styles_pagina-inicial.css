@@ -5,9 +5,11 @@ body
      min-height: 100vh;
     background-color: rgba(255, 225, 205, 0.212);
     font-family: Arial, sans-serif;
+
 }
+
 nav{
-    background-color: black;
+    background-color: #080299;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,25 +24,28 @@ input[type="text"] {
     border-radius: 5px;
     margin-right: 10px;
 }
-input[type="text"]:focus {
+input[type="text"]:focus 
+{
     outline: none;
 }
 
-input[type="text"]::placeholder {
+input[type="text"]::placeholder 
+{
     right: 10px;
     color: #999;
+    font-size: 17px;
 }
 
 main
 {
-    margin-top: 200px;
+    margin-top: 50px;
     flex: 1;
 }
 
 .linhas
 {
     background-color: white;
-    height: 600px;
+    height: 650px;
     margin-bottom: 100px;
     display: flex;
     scroll-behavior: smooth;
@@ -80,11 +85,36 @@ main
   box-shadow: 2px 4px 8px #00000096;
 }
 
+.btn_icone_salvar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%; 
+    background-color: #f0f0f0; 
+    background-image: url('../imgs/icone-salvar.png');
+    background-size: 18px;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    margin-right: auto;
+    margin-bottom: 20px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn_icone_salvar:hover {
+    background-color: #6d68ff;
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
 span
 {
     border-radius: 20px;
     background-image: linear-gradient(to right, rgb(93, 223, 54), rgb(81, 253, 173));
-    
+    font-weight: bold;
     padding: 5px 40px;
 }
 .resultados
@@ -92,11 +122,12 @@ span
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: auto 20px;
 }
 .resultado-item
 {
-    background-color: rgb(238, 238, 238);
+    justify-content: center;
+    background-color: rgb(255, 255, 255);
     border-radius: 10px;
     padding: 10px;
     margin: 10px;
@@ -106,3 +137,24 @@ span
     list-style-type: none;
 } 
 
+.resultado-item:hover
+{
+    cursor: pointer;
+    background-color: rgb(241, 241, 241);
+}
+
+footer
+{
+    background-color: #050175;
+    gap: 20px;
+    display: flex;
+    height: 60px;
+    align-items: center;
+}
+
+footer p
+{
+    position: absolute;
+    color: white;
+    right: 10px;
+}
