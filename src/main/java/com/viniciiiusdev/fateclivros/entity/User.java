@@ -1,6 +1,7 @@
 package com.viniciiiusdev.fateclivros.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,7 +22,13 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(
+            name = "registro_aluno",
+            nullable = false,
+            unique = true,
+            length = 13
+    )
+    @Size(min = 13, max = 13)
     private String registroAluno;
 
     private String password;
