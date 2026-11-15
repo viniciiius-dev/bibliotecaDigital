@@ -4,7 +4,7 @@ const body = document.body;
 
 async function PegarArquivo() {
   try {
-    const resposta = await fetch("scripts/BD de teste de livros.json");
+    const resposta = await fetch("http://localhost:8080/book");
 
     const conteudo = await resposta.json();
 
@@ -24,8 +24,17 @@ let n_linhas = 5;
 let n_quadrados = 10;
 let id_jaaparecido = [];
 
-const generos = ["Romance", "Distopia", "Ficção Científica", "Cyberpunk", "Fantasia"];
-
+  const generos = [
+    "DESENVOLVIMENTO",
+    "TECNOLOGIA",
+    "MATEMATICA",
+    "ENGENHARIA",
+    "CIENCIA",
+    "NEGOCIOS",
+    "FICCAO",
+    "LITERATURA",
+    "HISTORIA"
+  ];
 for (let i = 0; i < generos.length; i++) {
   const genero = generos[i];
 

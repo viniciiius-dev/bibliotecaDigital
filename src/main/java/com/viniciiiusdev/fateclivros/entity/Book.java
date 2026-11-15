@@ -15,7 +15,8 @@ public class Book {
 
     @Column(nullable = false)
     private String name;
-
+    @Column(nullable = false)
+    private String description;
     @Column(nullable = false)
     private String author;
 
@@ -40,6 +41,8 @@ public class Book {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private BookGenre genre;
+    @Column(nullable = false)
+    private String imageUrl;
 
 
     public Book() {
@@ -140,5 +143,13 @@ public class Book {
     @Override
     public int hashCode() {
         return Objects.hashCode(isbn);
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
     }
 }
