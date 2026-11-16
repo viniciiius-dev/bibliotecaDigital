@@ -1,16 +1,12 @@
 package com.viniciiiusdev.fateclivros.controller;
 
 import com.viniciiiusdev.fateclivros.dtos.AddFavoriteBookDTO;
-import com.viniciiiusdev.fateclivros.dtos.AddUserDTO;
 import com.viniciiiusdev.fateclivros.dtos.BookListFrontendDTO;
-import com.viniciiiusdev.fateclivros.entity.Book;
-import com.viniciiiusdev.fateclivros.entity.BookGenre;
-import com.viniciiiusdev.fateclivros.entity.User;
+import com.viniciiiusdev.fateclivros.dtos.UserProfileDTO;
 import com.viniciiiusdev.fateclivros.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/user")
@@ -21,14 +17,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public User getUser(@RequestParam Long id){
-        return userService.getUser(id);
-    }
-
-    @PostMapping
-    public void addUser(@RequestBody AddUserDTO userDTO){
-        userService.addUser(userDTO);
+    @GetMapping("/")
+    public UserProfileDTO getUser(){
+        return userService.getUserProfileForFrontend();
     }
 
     @GetMapping("/saved")
@@ -45,6 +36,7 @@ public class UserController {
     public void removeFavoriteBook(@RequestBody AddFavoriteBookDTO addFavoriteBookDTO) throws RuntimeException {
         userService.removeFavoriteBook(addFavoriteBookDTO.id());
     }
+
 
 
 }

@@ -1,6 +1,8 @@
 package com.viniciiiusdev.fateclivros.entity;
 
 
+import com.viniciiiusdev.fateclivros.Exception.BookIsNotAvailableException;
+import com.viniciiiusdev.fateclivros.Exception.BookIsNotSavedException;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -121,17 +123,15 @@ public class Book {
         return bookStock;
     }
 
-    public boolean reserve(){
-        if (bookStock > 0){
-            this.bookStock--;
-            return true;
+    public void reserve() {
+        if (bookStock <= 0) {
+            throw new BookIsNotAvailableException("O livro não está disponível no estoque.");
         }
-        return false;
-    }
 
-    public boolean release(){
+        bookStock--;
+    }
+    public void release(){
         bookStock += 1;
-        return true;
     }
 
     @Override

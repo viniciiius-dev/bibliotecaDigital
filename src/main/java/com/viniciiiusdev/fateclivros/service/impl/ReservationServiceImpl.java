@@ -1,92 +1,154 @@
 package com.viniciiiusdev.fateclivros.service.impl;
 
+import com.viniciiiusdev.fateclivros.Exception.ResourceNotFoundException;
+import com.viniciiiusdev.fateclivros.Exception.UserAlreadyHasExactReservationException;
 import com.viniciiiusdev.fateclivros.dtos.AddReservationDTO;
+import com.viniciiiusdev.fateclivros.dtos.BookStats;
+import com.viniciiiusdev.fateclivros.dtos.ReservedBookDTO;
 import com.viniciiiusdev.fateclivros.entity.Book;
 import com.viniciiiusdev.fateclivros.entity.Reservation;
 import com.viniciiiusdev.fateclivros.entity.ReservationStatus;
 import com.viniciiiusdev.fateclivros.entity.User;
+import com.viniciiiusdev.fateclivros.mapper.ReservationMapper;
 import com.viniciiiusdev.fateclivros.repository.ReservationRepository;
 import com.viniciiiusdev.fateclivros.service.BookService;
 import com.viniciiiusdev.fateclivros.service.ReservationService;
-import com.viniciiiusdev.fateclivros.service.UserService;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
-    private final UserService userService;
+
+    private final AuthenticatedUserService authenticatedUserService;
     private final BookService bookService;
     private final ReservationRepository reservationRepository;
-
-    public ReservationServiceImpl(UserService userService, BookService bookService, ReservationRepository reservationRepository){
-        this.userService = userService;
+    private final ReservationMapper reservationMapper;
+    public ReservationServiceImpl(AuthenticatedUserService authenticatedUserService, BookService bookService, ReservationRepository reservationRepository, ReservationMapper reservationMapper) {
+        this.authenticatedUserService = authenticatedUserService;
         this.bookService = bookService;
         this.reservationRepository = reservationRepository;
+        this.reservationMapper = reservationMapper;
+    }
+
+    // METODOS QUE PEGAM INFORMAÇÃO
+    private Reservation getAuthenticatedUserReservation(Long reservationId) {
+        User user = authenticatedUserService.getAuthenticatedUser();
+
+        return reservationRepository
+                .findByReservationIdAndUser(reservationId, user)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Reserva não encontrada")
+                );
     }
 
 
     @Override
-    @Transactional
-    public void addReservation(AddReservationDTO addReservationDTO){
-        User user = userService.getUser(addReservationDTO.userId());
-        Book book = bookService.getBookByIsbn(addReservationDTO.isbn());
+    @Transactional(readOnly = true)
+    public ReservedBookDTO getUserReservationById(Long reservationId) {
+        Reservation reservation = getAuthenticatedUserReservation(reservationId);
+        return reservationMapper.mapToReservedBook(reservation);
+    }
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReservedBookDTO> getReservationsByUser() {
+        User user = authenticatedUserService.getAuthenticatedUser();
+        List<Reservation> reservations = reservationRepository.findByUser(user);
+        return reservationMapper.mapToReservedBooks(reservations);
+    }
+
+
+
+
+    @Override
+    @Transactional
+    public void addReservation(AddReservationDTO addReservationDTO) {
+        User user = authenticatedUserService.getAuthenticatedUser();
+        Book book = bookService.getBookById(addReservationDTO.bookId());
+
+        List<ReservationStatus> activeStatus = List.of(ReservationStatus.AGUARDANDO_RETIRADA, ReservationStatus.EM_ANDAMENTO);
+        if (reservationRepository.existsByUserAndBookAndReservationStatusIn(user, book, activeStatus)){
+            throw new UserAlreadyHasExactReservationException("O usuário tem a mesma exata reserva ativa.");
+        }
         book.reserve();
+
         Reservation reservation = new Reservation(user, book);
-
         reservationRepository.save(reservation);
-
     }
 
-    @Transactional
+
+
+
+
+
     @Override
+    @Transactional
     public void cancelReservation(Long reservationId) {
-        Reservation reservation = reservationRepository.getReferenceById(reservationId);
+        Reservation reservation = getAuthenticatedUserReservation(reservationId);
         reservation.cancel();
+        reservation.getBook().release();
     }
+
+    @Override
     @Transactional
-    @Override
-    public void completeReservation(Long reservationId) {
-        Reservation reservation = reservationRepository.getReferenceById(reservationId);
-        reservation.complete();
+    public void pickupReservation(Long reservationId) {
+        Reservation reservation = getAuthenticatedUserReservation(reservationId);
+
+        reservation.pickup();
     }
+
+    @Override
     @Transactional
-    @Override
-    public void markAsReadyForPickup(Long reservationId) {
-        Reservation reservation = reservationRepository.getReferenceById(reservationId);
-        reservation.markAsReadyForPickup();
-    }
+    public void returnReservation(Long reservationId) {
+        Reservation reservation = getAuthenticatedUserReservation(reservationId);
 
-    @Override
-    public Reservation getReservationById(Long reservationId) {
-        return reservationRepository.getReferenceById(reservationId);
-    }
-
-    @Override
-    public List<Reservation> getReservationsByUser(Long userId) {
-        User user = userService.getUser(userId);
-        return reservationRepository.findByUser(user);
+        reservation.returnBook();
+        reservation.getBook().release();
     }
 
 
 
+
+    // METODOS QUE PEGAM INFORMAÇÃO FILTRADA
+
     @Override
-    public List<Reservation> findByUserIdAndReservationStatus(Long userId, ReservationStatus reservationStatus) {
-        User user = userService.getUser(userId);
-        return reservationRepository.findByUserAndReservationStatus(user, reservationStatus);
+    @Transactional(readOnly = true)
+    public List<Reservation> getUserReservationsByStatus(ReservationStatus status) {
+        User user = authenticatedUserService.getAuthenticatedUser();
+
+        return reservationRepository.findByUserAndReservationStatus(user, status);
     }
 
     @Override
-    public List<Reservation> findByUserOrderByExpirationDateDesc(Long userId) {
-        User user = userService.getUser(userId);
+    @Transactional(readOnly = true)
+    public List<Reservation> getUserReservationsOrderByExpirationDateDesc() {
+        User user = authenticatedUserService.getAuthenticatedUser();
+
         return reservationRepository.findByUserOrderByExpirationDateDesc(user);
     }
 
     @Override
-    public List<Reservation> findByUserOrderByExpirationDateAsc(Long userId) {
-        User user = userService.getUser(userId);
+    @Transactional(readOnly = true)
+    public List<Reservation> getUserReservationsOrderByExpirationDateAsc() {
+        User user = authenticatedUserService.getAuthenticatedUser();
+
         return reservationRepository.findByUserOrderByExpirationDateAsc(user);
+    }
+    @Override
+    public BookStats getBookStats(User user){
+        return new BookStats(getNumberOfTotalReservations(user), getNumberOfPendingReservations(user));
+    }
+    @Override
+    public Long getNumberOfTotalReservations(User user) {
+        return reservationRepository.countByUser(user);
+    }
+
+    @Override
+    public Long getNumberOfPendingReservations(User user) {
+        ReservationStatus statusPendente = ReservationStatus.AGUARDANDO_RETIRADA;
+        return reservationRepository.countByUserAndReservationStatus(user, statusPendente);
     }
 }

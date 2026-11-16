@@ -43,4 +43,27 @@ public class BookMapper {
         finalBookList.sort(Comparator.comparing(BookListFrontendDTO::id));
         return finalBookList;
     }
+    public BookListFrontendDTO mapSingleBookToFrontend(Book book){
+        String status;
+        if (book.getBookStock() > 0){
+            status = "disponível";
+        }
+        else{
+            status = "indisponível";
+        }
+        return new BookListFrontendDTO(
+                book.getBookId(),
+                book.getImageUrl(),
+                book.getGenre(),
+                book.getName(),
+                book.getAuthor(),
+                book.getDescription(),
+                status,
+                book.getPublisher(),
+                book.getLanguage(),
+                book.getYear(),
+                book.getPages(),
+                book.getIsbn(),
+                book.getBookStock());
+    }
 }

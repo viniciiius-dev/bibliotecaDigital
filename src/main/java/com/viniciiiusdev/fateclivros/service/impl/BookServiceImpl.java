@@ -1,5 +1,6 @@
 package com.viniciiiusdev.fateclivros.service.impl;
 
+import com.viniciiiusdev.fateclivros.Exception.ResourceNotFoundException;
 import com.viniciiiusdev.fateclivros.dtos.BookListFrontendDTO;
 import com.viniciiiusdev.fateclivros.entity.Book;
 import com.viniciiiusdev.fateclivros.mapper.BookMapper;
@@ -44,8 +45,10 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book getBookById(Long bookId){
-        return bookRepository.getReferenceById(bookId);
+    public Book getBookById(Long bookId) {
+        return bookRepository.findById(bookId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Livro não encontrado.")
+                );
     }
-
 }

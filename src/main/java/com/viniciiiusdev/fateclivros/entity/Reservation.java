@@ -24,13 +24,14 @@ public class Reservation {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus;
-
+    @Column(nullable = false)
     private LocalDateTime expirationDate;
 
     public Reservation(User user, Book book) {
         this.user = user;
         this.book = book;
-        this.reservationStatus = ReservationStatus.ATIVO;
+        this.reservationStatus = ReservationStatus.AGUARDANDO_RETIRADA;
+        this.expirationDate = LocalDateTime.now().plusDays(7);
     }
 
 
@@ -54,35 +55,44 @@ public class Reservation {
         return expirationDate;
     }
 
+
+
     public void cancel(){
         if (!canBeCancelled()) {
-            throw new IllegalStateException("Não é possível cancelar uma reserva no status: " + reservationStatus);
+            throw new ReservationStatusException("Não é possível cancelar uma reserva no status: " + reservationStatus);
         }
         reservationStatus = ReservationStatus.CANCELADO;
     }
 
-    public boolean canBeCancelled(){
-        return reservationStatus != ReservationStatus.CANCELADO && reservationStatus != ReservationStatus.COMPLETO && reservationStatus != ReservationStatus.LENDO;
+    public boolean canBeCancelled() {
+        return reservationStatus == ReservationStatus.AGUARDANDO_RETIRADA;
     }
 
-    public void complete(){
-        if (!canBeCompleted()){
-            throw new ReservationStatusException("Não é possível completar uma reserva no status: " + reservationStatus);
+    public void returnBook(){
+        if (reservationStatus != ReservationStatus.EM_ANDAMENTO) {
+            throw new ReservationStatusException(
+                    "Não é possível devolver uma reserva no status: " + reservationStatus
+            );
         }
-        reservationStatus = ReservationStatus.COMPLETO;
+
+        reservationStatus = ReservationStatus.DEVOLVIDO;
+    }
+    public void pickup() {
+        if (reservationStatus != ReservationStatus.AGUARDANDO_RETIRADA) {
+            throw new ReservationStatusException(
+                    "Não é possível retirar uma reserva no status: " + reservationStatus
+            );
+        }
+
+        if (!expirationDate.isAfter(LocalDateTime.now())) {
+            throw new ReservationStatusException("O prazo para retirada desta reserva expirou");
+        }
+
+        reservationStatus = ReservationStatus.EM_ANDAMENTO;
+        expirationDate = LocalDateTime.now().plusDays(30);
     }
 
-    public boolean canBeCompleted(){
-        return reservationStatus == ReservationStatus.LENDO;
-    }
 
-    public void markAsReadyForPickup(){
-        if (reservationStatus == ReservationStatus.ATIVO){
-            reservationStatus = ReservationStatus.ESPERANDO_RETIRADA;
-            expirationDate = LocalDateTime.now().plusDays(7);
-        }
-        else{
-            throw new ReservationStatusException("Uma reserva precisa ter status ATIVO para seu status ser trocado para ESPERANDO_RETIRADA");
-        }
-    }
+
+
 }

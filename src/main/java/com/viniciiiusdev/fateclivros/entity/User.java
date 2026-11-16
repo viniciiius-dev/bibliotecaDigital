@@ -35,6 +35,9 @@ public class User implements UserDetails {
 
     private String password;
 
+    @Column(nullable = false, unique = true, length = 254)
+    private String academicEmail;
+
     @ManyToMany
     @JoinTable(
             name = "user_favorites",
@@ -107,6 +110,10 @@ public class User implements UserDetails {
         return Objects.hashCode(registroAluno);
     }
 
+
+    public String getAcademicEmail() {
+        return academicEmail;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
