@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BookService {
     List<Book> getAllBooks();
-    List<BookListFrontendDTO> bookListJsonForFrontEnd();
+    List<BookListFrontendDTO> getBooksForFrontEnd();
     Book getBookByIsbn(String isbn);
     void saveBook(Book book);
     Book getBookById(Long bookId);

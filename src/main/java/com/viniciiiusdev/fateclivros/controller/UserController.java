@@ -2,11 +2,14 @@ package com.viniciiiusdev.fateclivros.controller;
 
 import com.viniciiiusdev.fateclivros.dtos.AddFavoriteBookDTO;
 import com.viniciiiusdev.fateclivros.dtos.AddUserDTO;
+import com.viniciiiusdev.fateclivros.dtos.BookListFrontendDTO;
 import com.viniciiiusdev.fateclivros.entity.Book;
+import com.viniciiiusdev.fateclivros.entity.BookGenre;
 import com.viniciiiusdev.fateclivros.entity.User;
 import com.viniciiiusdev.fateclivros.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -29,8 +32,8 @@ public class UserController {
     }
 
     @GetMapping("/saved")
-    public Set<Book> GetFavoriteBook(){
-        return userService.getFavoritesBook();
+    public List<BookListFrontendDTO> GetFavoriteBookForFrontend(){
+        return userService.getFavoritesBookForFrontend();
     }
 
     @PostMapping("/saved")

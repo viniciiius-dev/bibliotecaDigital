@@ -18,8 +18,8 @@ public class BookController {
     }
 
     @GetMapping
-    public List<BookListFrontendDTO> getBooks(){
-        return bookService.bookListJsonForFrontEnd();
+    public List<BookListFrontendDTO> getBooksForFrontend(){
+        return bookService.getBooksForFrontEnd(); // erro aqui
     }
 
     @GetMapping("/{isbn}")

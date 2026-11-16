@@ -74,6 +74,8 @@ for (let i = 0; i < generos.length; i++) {
     img.alt = "Capa de " + livro.nome;
     img.classList.add("icone-pesquisa");
     quadrado.appendChild(img);
+    img.dataset.id = livro.id; //linha adicionada, pois o frontend reconhecia toda imagem placeholder (imagem de livro que nao tem capa) como se fosse o mesmo livro, então por ex: livro A e B, se vc clicar em qualquer um deles, ia para a pagina do livro C
+
 
     // Nome do livro
     const nomeLivro = document.createElement("h2");
@@ -106,7 +108,7 @@ const imagens = document.querySelectorAll('img');
 
 imagens.forEach(imagem => {
   imagem.addEventListener('click', (evento) => {
-    const livroInfo = conteudo_global.find(l => l.foto === evento.target.src);
+    const livroInfo = conteudo_global.find(l => l.id == evento.target.dataset.id); //modificada para reconhecer livro pelo ID, e não pela imagem.
     if (livroInfo) 
     {
       localStorage.setItem('livroSelecionado', JSON.stringify(livroInfo));

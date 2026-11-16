@@ -2,7 +2,9 @@ package com.viniciiiusdev.fateclivros.service.impl;
 
 import com.viniciiiusdev.fateclivros.Exception.ResourceNotFoundException;
 import com.viniciiiusdev.fateclivros.Exception.UnauthorizedException;
+import com.viniciiiusdev.fateclivros.dtos.BookListFrontendDTO;
 import com.viniciiiusdev.fateclivros.entity.Book;
+import com.viniciiiusdev.fateclivros.mapper.BookMapper;
 import com.viniciiiusdev.fateclivros.repository.UserRepository;
 import com.viniciiiusdev.fateclivros.dtos.AddUserDTO;
 import com.viniciiiusdev.fateclivros.entity.User;
@@ -14,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -22,10 +25,12 @@ public class UserServiceImplementation implements UserService {
 
     private final UserRepository userRepository;
     private final BookService bookService;
+    private final BookMapper bookMapper;
 
-    public UserServiceImplementation(UserRepository userRepository, BookService bookService){
+    public UserServiceImplementation(UserRepository userRepository, BookService bookService, BookMapper bookMapper){
         this.userRepository = userRepository;
         this.bookService = bookService;
+        this.bookMapper = bookMapper;
     }
 
     public User getUser(Long id){
@@ -38,11 +43,11 @@ public class UserServiceImplementation implements UserService {
     }
 
 
-    public Set<Book> getFavoritesBook(){
+    public List<BookListFrontendDTO> getFavoritesBookForFrontend(){
         Authentication authentication = getAuthenticatedUser();
         String currentPrincipalName = authentication.getName();
         User user = userRepository.findByRegistroAluno(currentPrincipalName).orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
-        return user.getFavoriteBooks();
+        return bookMapper.toFrontendBookList(user.getFavoriteBooks());
     }
 
     @Transactional

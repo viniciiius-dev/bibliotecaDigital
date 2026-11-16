@@ -2,6 +2,7 @@ package com.viniciiiusdev.fateclivros.service.impl;
 
 import com.viniciiiusdev.fateclivros.dtos.BookListFrontendDTO;
 import com.viniciiiusdev.fateclivros.entity.Book;
+import com.viniciiiusdev.fateclivros.mapper.BookMapper;
 import com.viniciiiusdev.fateclivros.repository.BookRepository;
 import com.viniciiiusdev.fateclivros.service.BookService;
 import org.springframework.stereotype.Service;
@@ -14,9 +15,10 @@ public class BookServiceImpl implements BookService {
 
 
     private final BookRepository bookRepository;
-
-    public BookServiceImpl(BookRepository bookRepository){
+    private final BookMapper bookMapper;
+    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper){
         this.bookRepository = bookRepository;
+        this.bookMapper = bookMapper;
     }
 
     @Override
@@ -27,6 +29,12 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<Book> getAllBooks(){
         return bookRepository.findAll();
+    }
+
+    @Override
+    public List<BookListFrontendDTO> getBooksForFrontEnd() {
+        List<Book> bookList = getAllBooks();
+        return bookMapper.toFrontendBookList(bookList);
     }
 
 
@@ -40,38 +48,4 @@ public class BookServiceImpl implements BookService {
         return bookRepository.getReferenceById(bookId);
     }
 
-
-
-
-    @Override
-    public List<BookListFrontendDTO> bookListJsonForFrontEnd() {
-        List<Book> bookList = getAllBooks();
-        ArrayList<BookListFrontendDTO> finalBookList = new ArrayList<>();
-        for (Book book : bookList){
-            String status;
-            if (book.getBookStock() > 0){
-                status = "disponivel";
-            }
-            else{
-                status = "indisponível";
-            }
-            finalBookList.add(new BookListFrontendDTO(
-                    book.getBookId(),
-                    book.getImageUrl(),
-                    book.getGenre(),
-                    book.getName(),
-                    book.getAuthor(),
-                    book.getDescription(),
-                    status,
-                    book.getPublisher(),
-                    book.getLanguage(),
-                    book.getYear(),
-                    book.getPages(),
-                    book.getIsbn(),
-                    book.getBookStock()
-
-            ));
-        }
-        return finalBookList;
-    }
 }
