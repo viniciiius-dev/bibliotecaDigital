@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/styles_pagina-inicial.css" />
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+
+      main {
+        margin-top: 60px;
+      }
+      .div_bloco {
+        display: flex;
+        margin-bottom: 20px;
+        height: 200px;
+        background-color: white;
+        font-size: 20px;
+
+        text-align: center;
+        align-items: center;
+        padding: 0;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.603);
+        border-radius: 10px;
+        background-size: cover;
+      }
+
+      #div_texto {
+        width: 60%;
+      }
+
+      #div_img {
+        justify-content: center;
+        overflow: hidden;
+        height: 100%;
+        width: 40%;
+        background-color: rgba(4, 0, 116, 0.849);
+        align-content: center;
+        padding: 0;
+      }
+
+      img {
+        position: relative;
+        height: 90%;
+        width: auto;
+        object-fit: cover;
+      }
+
+      #sinopse {
+        font-weight: bold;
+        width: 70%;
+        height: 100%;
+        align-content: center;
+        margin: 20px auto;
+        border-radius: 10px;
+      }
+
+      button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #f0f0f0;
+        background-image: url("../imgs/icone-lixeira.png");
+        background-size: 18px;
+        background-position: center;
+        background-repeat: no-repeat;
+        border: none;
+        cursor: pointer;
+        margin-right: 50px;
+        margin-left: 50px;
+        transition:
+          background-color 0.2s,
+          transform 0.1s;
+      }
+
+      button:hover {
+        background-color: #ff4545;
+        transform: scale(1.05);
+      }
+
+      button:active {
+        transform: scale(0.95);
+      }
+
+      footer {
+        background-color: #050175;
+        gap: 20px;
+        display: flex;
+        height: 60px;
+        align-items: center;
+      }
+
+      a {
+        font-weight: bold;
+        font-size: 38px;
+
+        margin-top: 20px;
+        text-decoration: none;
+        color: white;
+      }
+
+      footer p {
+        position: absolute;
+        color: white;
+        right: 10px;
+      }
+    </style>
+    <title>Livros Salvos</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="pagina-inicial.html">Página Inicial</a>
+      </nav>
+    </header>
+
+    <main>
+      <div id="div_blocos">
+        <div id="div_texto"></div>
+        <div id="div_img"></div>
+      </div>
+    </main>
+
+    <footer>
+      <p>Biblioteca Digital Fatec</p>
+    </footer>
+
+    <script>
+      async function buscarLivrosSalvos() {
+        const response = await fetch("/api/user/saved", {
+          method: "GET",
+          credentials: "include", 
+        });
+
+        return await response.json();
+      }
+
+      async function deletarLivrosSalvos(id) {
+        const response = await fetch('/api/user/saved', {
+          method: "DELETE",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ id: id })
+        });
+
+          if (!response.ok) {
+        const texto = await response.text();
+        throw new Error(`Erro ${response.status}: ${texto}`);
+        }
+
+        return true;
+      }
+
+      async function exibirLivrosSalvos() {
+        const livros = await buscarLivrosSalvos();
+        console.log(livros);
+
+        //Criando as divs
+
+        for (let i = 0; i < livros.length; i++) {
+
+          const main = document.querySelector("main");
+          const div_bloco = document.createElement("div");
+          const div_img = document.createElement("div");
+          const div_texto = document.createElement("div");
+
+          //Colocando classe nas divs
+          div_bloco.className = "div_bloco";
+          div_bloco.id = livros[i].id;
+          div_img.id = "div_img";
+          div_texto.id = "div_texto";
+
+          const titulo = document.createElement("h1");
+          titulo.textContent = livros[i].nome;
+          div_texto.appendChild(titulo);
+
+          const autor = document.createElement("p");
+          autor.textContent = `Autor: ${livros[i].autor}`;
+          autor.id = "autor";
+          div_texto.appendChild(autor);
+
+          const status = document.createElement("p");
+          status.textContent = `Status: ${livros[i].status}`;
+          status.id = "status";
+          div_texto.appendChild(status);
+
+          const imagem = document.createElement("img");
+          imagem.src = livros[i].foto;
+          imagem.loading = "lazy";
+          imagem.alt = `Capa de ${livros[i].nome}`;
+          div_img.appendChild(imagem);
+          div_img.id = "div_img";
+
+          const btn_excluir = document.createElement("button");
+          btn_excluir.className = "btn_excluir";
+          btn_excluir.id = livros[i].id;
+
+          div_bloco.appendChild(div_texto);
+          div_bloco.appendChild(div_img);
+          div_bloco.appendChild(btn_excluir);
+          main.appendChild(div_bloco);
+          
+
+          if (status.textContent.toLowerCase() == "status: disponível") {
+            status.style.color = "green";
+          } else {
+            status.style.color = "red";
+          }
+        }
+        const btns_excluir = document.querySelectorAll('.btn_excluir');
+
+      btns_excluir.forEach(excluir =>{
+        excluir.addEventListener('click', async() =>{
+            const divexcluida = document.getElementById(excluir.id);
+            try
+            {
+                await deletarLivrosSalvos(excluir.id);
+            }
+            catch(e)
+            {
+                console.error("Erro ao deletar: ", e);
+            }
+            alert("Livro deletado da lista de salvos com sucesso");
+            divexcluida.remove();
+            
+        });
+      });
+      }
+
+      exibirLivrosSalvos()
+
+      
+    </script>
+  </body>
+</html>

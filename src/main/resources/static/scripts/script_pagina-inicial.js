@@ -1,6 +1,7 @@
 let conteudo_global = null;
 let nomes = [];
 const body = document.body;
+const nav = document.querySelector("nav");
 
 async function PegarArquivo() {
   try {
@@ -18,7 +19,103 @@ async function PegarArquivo() {
 
 async function main() {
 
+//Fazendo o botão do perfil funcionar
+const btn_perfil = document.getElementById("btn_perfil");
+
+btn_perfil.addEventListener('click', ()=>{
+const elemento = document.getElementById("div_perfil");
+if (!elemento)
+{
+const div_perfil = document.createElement("div");
+div_perfil.id = "div_perfil";
+
+div_perfil.appendChild(btn_perfil);
+btn_perfil.style.right = 'auto';
+btn_perfil.style.marginTop = '20px';
+
+//Dentro da div de perfil
+const ul_div_perfil = document.createElement("ul");
+ul_div_perfil.className = "ul_perfil";
+
+const li_div_perfil_INFORMACOESDACONTA = document.createElement("li");
+const a_li_perfil_INFORMACOESDACONTA = document.createElement("a");
+a_li_perfil_INFORMACOESDACONTA.textContent = "Informações da Conta";
+a_li_perfil_INFORMACOESDACONTA.href = ""; //Página da conta
+li_div_perfil_INFORMACOESDACONTA.className = "li_perfil";
+li_div_perfil_INFORMACOESDACONTA.appendChild(a_li_perfil_INFORMACOESDACONTA);
+
+const li_div_perfil_LIVROSSALVOS = document.createElement("li");
+const a_li_perfilLIVROSSALVOS = document.createElement("a");
+a_li_perfilLIVROSSALVOS.textContent = "Lista de Salvos";
+a_li_perfilLIVROSSALVOS.href = "pagina_salvos.html"
+li_div_perfil_LIVROSSALVOS.className = "li_perfil";
+li_div_perfil_LIVROSSALVOS.appendChild(a_li_perfilLIVROSSALVOS);
+
+//Adicionando os li's na ul
+ul_div_perfil.appendChild(li_div_perfil_INFORMACOESDACONTA);
+ul_div_perfil.appendChild(li_div_perfil_LIVROSSALVOS);
+
+//Adicionando a ul à div perfil
+div_perfil.appendChild(ul_div_perfil)
+
+body.appendChild(div_perfil);
+}
+
+else
+{
+  nav.appendChild(btn_perfil);
+  btn_perfil.style.right = '50px';
+  btn_perfil.style.marginTop = '0';
+
+  elemento.remove();
+}
+});
+
 await PegarArquivo();
+
+//Funções dos favoritos
+async function salvarLivro(id) {
+      const response = await fetch('/api/user/saved', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ id: id })
+      });
+      const texto = await response.text();
+      return texto ? JSON.parse(texto) : null;
+
+}
+
+async function buscarLivrosSalvos() {
+      const response = await fetch('/api/user/saved', {
+        method: 'GET',
+        credentials: 'include' 
+        
+      });
+
+      return await response.json();
+}
+
+async function deletarLivrosSalvos(id) {
+        const response = await fetch('/api/user/saved', {
+          method: "DELETE",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ id: id })
+        });
+
+          if (!response.ok) {
+        const texto = await response.text();
+        throw new Error(`Erro ${response.status}: ${texto}`);
+        }
+
+        return true;
+      }
+
+const livrossalvos = await buscarLivrosSalvos();
+const ids_livros_salvos =  new Set (livrossalvos.map(li => li.id));
+
+//console.log(buscarLivrosSalvos());
 
 let n_linhas = 5;
 let n_quadrados = 10;
@@ -48,6 +145,7 @@ for (let i = 0; i < generos.length; i++) {
   body.appendChild(linha);
 
   for (let j = 0; j < n_quadrados; j++) {
+
     // Sorteia ANTES de criar o quadrado
     const candidatos = conteudo_global.filter(
       l => l.genero === genero && !id_jaaparecido.includes(l.id)
@@ -65,7 +163,13 @@ for (let i = 0; i < generos.length; i++) {
     const icone_salvar = document.createElement('button');
     icone_salvar.className = "btn_icone_salvar";
     icone_salvar.id = livro.id;
+
     quadrado.appendChild(icone_salvar)
+
+    if(ids_livros_salvos.has(livro.id))
+    {
+      icone_salvar.classList.add('salvo');
+    }
 
     // Imagem do livro
     const img = document.createElement("img");
@@ -165,20 +269,26 @@ document.getElementById("pesquisar").addEventListener("input", function() {
 
 const btns_salvar = document.querySelectorAll('.btn_icone_salvar');
 
-btns_salvar.forEach(salvar => {
-  salvar.addEventListener('click', (e) => {
-    const livroInfo = conteudo_global.find(l => l.id == salvar.id);
-    if(livroInfo.status === "indisponível")
-    {
-      alert("Não é possível salvar pois o livro está indisponível");
-    }
 
-    else
+btns_salvar.forEach(salvar => {
+  salvar.addEventListener('click', async (e) => {
+
+    try 
     {
-      alert("Dá pra salvar")
-      // SALVAR O LIVRO NA LISTA AQUI
+      if (salvar.classList.contains('salvo')) {
+      salvar.classList.remove('salvo');
+      await deletarLivrosSalvos(salvar.id);
+      return;
     }
-  
+      alert("Livro salvo com sucesso!");
+      salvar.classList.add('salvo');
+      await salvarLivro(salvar.id);
+    } 
+    catch (erro) 
+    {
+      alert("Erro ao salvar o livro.");
+      console.error(erro);
+    }
   });
 });
 
