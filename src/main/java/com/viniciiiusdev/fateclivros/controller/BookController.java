@@ -1,7 +1,7 @@
 package com.viniciiiusdev.fateclivros.controller;
 
 
-import com.viniciiiusdev.fateclivros.dtos.BookListJsonForFront;
+import com.viniciiiusdev.fateclivros.dtos.BookListFrontendDTO;
 import com.viniciiiusdev.fateclivros.entity.Book;
 import com.viniciiiusdev.fateclivros.service.BookService;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,7 @@ public class BookController {
     }
 
     @GetMapping
-    public List<BookListJsonForFront> getBooks(){
+    public List<BookListFrontendDTO> getBooks(){
         return bookService.bookListJsonForFrontEnd();
     }
 

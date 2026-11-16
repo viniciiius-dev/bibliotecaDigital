@@ -1,6 +1,6 @@
 package com.viniciiiusdev.fateclivros.service.impl;
 
-import com.viniciiiusdev.fateclivros.dtos.BookListJsonForFront;
+import com.viniciiiusdev.fateclivros.dtos.BookListFrontendDTO;
 import com.viniciiiusdev.fateclivros.entity.Book;
 import com.viniciiiusdev.fateclivros.repository.BookRepository;
 import com.viniciiiusdev.fateclivros.service.BookService;
@@ -37,17 +37,16 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book getBookById(Long bookId){
-        bookRepository.getReferenceById(bookId);
-        return null;
+        return bookRepository.getReferenceById(bookId);
     }
 
 
 
 
     @Override
-    public List<BookListJsonForFront> bookListJsonForFrontEnd() {
+    public List<BookListFrontendDTO> bookListJsonForFrontEnd() {
         List<Book> bookList = getAllBooks();
-        ArrayList<BookListJsonForFront> finalBookList = new ArrayList<>();
+        ArrayList<BookListFrontendDTO> finalBookList = new ArrayList<>();
         for (Book book : bookList){
             String status;
             if (book.getBookStock() > 0){
@@ -56,14 +55,21 @@ public class BookServiceImpl implements BookService {
             else{
                 status = "indisponível";
             }
-            finalBookList.add(new BookListJsonForFront(
+            finalBookList.add(new BookListFrontendDTO(
                     book.getBookId(),
                     book.getImageUrl(),
                     book.getGenre(),
                     book.getName(),
                     book.getAuthor(),
                     book.getDescription(),
-                    status
+                    status,
+                    book.getPublisher(),
+                    book.getLanguage(),
+                    book.getYear(),
+                    book.getPages(),
+                    book.getIsbn(),
+                    book.getBookStock()
+
             ));
         }
         return finalBookList;

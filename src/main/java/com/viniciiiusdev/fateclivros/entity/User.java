@@ -1,5 +1,7 @@
 package com.viniciiiusdev.fateclivros.entity;
 
+import com.viniciiiusdev.fateclivros.Exception.BookIsNotSavedException;
+import com.viniciiiusdev.fateclivros.Exception.SavedBookAlreadyExistsException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.jspecify.annotations.Nullable;
@@ -50,6 +52,17 @@ public class User implements UserDetails {
 
     public Set<Book> getFavoriteBooks() {
         return favoriteBooks;
+    }
+
+    public void addFavoriteBook(Book book){
+        if (!favoriteBooks.add(book)){
+            throw new SavedBookAlreadyExistsException("Book is already saved");
+        };
+    }
+    public void removeFavoriteBook(Book book){
+        if (!favoriteBooks.remove(book)){
+            throw new BookIsNotSavedException("Book is already not saved.");
+        };
     }
 
     public void setFavoriteBooks(Set<Book> favoriteBooks) {

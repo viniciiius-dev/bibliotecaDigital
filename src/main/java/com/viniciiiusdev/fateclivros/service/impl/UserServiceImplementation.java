@@ -1,11 +1,17 @@
 package com.viniciiiusdev.fateclivros.service.impl;
 
+import com.viniciiiusdev.fateclivros.Exception.ResourceNotFoundException;
+import com.viniciiiusdev.fateclivros.Exception.UnauthorizedException;
 import com.viniciiiusdev.fateclivros.entity.Book;
 import com.viniciiiusdev.fateclivros.repository.UserRepository;
 import com.viniciiiusdev.fateclivros.dtos.AddUserDTO;
 import com.viniciiiusdev.fateclivros.entity.User;
 import com.viniciiiusdev.fateclivros.service.BookService;
 import com.viniciiiusdev.fateclivros.service.UserService;
+import jakarta.transaction.Transactional;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -31,18 +37,46 @@ public class UserServiceImplementation implements UserService {
         userRepository.saveAndFlush(newUser);
     }
 
-    public void addFavorite(Long userId, Long bookId){
-        User user = userRepository.getReferenceById(userId);
-        Book book = bookService.getBookById(bookId);
 
-        user.getFavoriteBooks().add(book);
+    public Set<Book> getFavoritesBook(){
+        Authentication authentication = getAuthenticatedUser();
+        String currentPrincipalName = authentication.getName();
+        User user = userRepository.findByRegistroAluno(currentPrincipalName).orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+        return user.getFavoriteBooks();
     }
 
-    public void removeFavorite(Long userId, Long bookId){
-        User user = userRepository.getReferenceById(userId);
+    @Transactional
+    public void addFavoriteBook(Long bookId) throws RuntimeException {
+        Authentication authentication = getAuthenticatedUser();
+        String currentPrincipalName;
+        currentPrincipalName = authentication.getName();
+
+        User user = userRepository.findByRegistroAluno(currentPrincipalName).orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
         Book book = bookService.getBookById(bookId);
 
-        user.getFavoriteBooks().remove(book);
+        user.addFavoriteBook(book);
+
+    }
+    @Transactional
+    public void removeFavoriteBook(Long bookId) throws RuntimeException {
+        Authentication authentication = getAuthenticatedUser();
+        String currentPrincipalName;
+        currentPrincipalName = authentication.getName();
+
+        User user = userRepository.findByRegistroAluno(currentPrincipalName).orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+        Book book = bookService.getBookById(bookId);
+
+        user.removeFavoriteBook(book);
+    }
+
+    public Authentication getAuthenticatedUser() throws RuntimeException {
+        String currentPrincipalName;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken){
+            throw new UnauthorizedException("Não foi possivel encontrar usuário autenticado");
+        }
+        return authentication;
     }
 
     public Set<Book> getFavoriteByUserId(Long userId){
