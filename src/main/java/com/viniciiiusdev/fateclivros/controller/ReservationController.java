@@ -20,8 +20,8 @@ public class ReservationController {
 
 
     @PostMapping
-    public void addReservation(@RequestBody AddReservationDTO addReservationDTO){
-        reservationService.addReservation(addReservationDTO);
+    public ReservedBookDTO addReservation(@RequestBody AddReservationDTO addReservationDTO){
+        return reservationService.addReservation(addReservationDTO);
     }
 
     @GetMapping

@@ -65,7 +65,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
-    public void addReservation(AddReservationDTO addReservationDTO) {
+    public ReservedBookDTO addReservation(AddReservationDTO addReservationDTO) {
         User user = authenticatedUserService.getAuthenticatedUser();
         Book book = bookService.getBookById(addReservationDTO.bookId());
 
@@ -76,7 +76,8 @@ public class ReservationServiceImpl implements ReservationService {
         book.reserve();
 
         Reservation reservation = new Reservation(user, book);
-        reservationRepository.save(reservation);
+        Reservation savedReservation = reservationRepository.save(reservation);
+        return reservationMapper.mapToReservedBook(savedReservation);
     }
 
 

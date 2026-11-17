@@ -10,7 +10,7 @@ import com.viniciiiusdev.fateclivros.entity.User;
 import java.util.List;
 
 public interface ReservationService {
-    void addReservation(AddReservationDTO addReservationDTO);
+    ReservedBookDTO addReservation(AddReservationDTO addReservationDTO);
     void cancelReservation(Long reservationId);
     void pickupReservation(Long reservationId);
     void returnReservation(Long reservationId);
