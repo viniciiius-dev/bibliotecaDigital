@@ -17,7 +17,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public UserProfileDTO getUser(){
         return userService.getUserProfileForFrontend();
     }
