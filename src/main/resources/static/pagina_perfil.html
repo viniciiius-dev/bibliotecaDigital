@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/styles_pagina-inicial.css" />
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+
+      main {
+        margin-top: 60px;
+      }
+      
+      #div_bloco {
+        display: flex;
+        margin-bottom: 20px;
+        height: 200px;
+        background-color: white;
+        font-size: 20px;
+
+        text-align: center;
+        align-items: center;
+        padding: 0;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.603);
+        border-radius: 10px;
+        background-size: cover;
+      }
+
+      button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #f0f0f0;
+        background-image: url("../imgs/icone-lixeira.png");
+        background-size: 18px;
+        background-position: center;
+        background-repeat: no-repeat;
+        border: none;
+        cursor: pointer;
+        margin-right: 50px;
+        margin-left: 50px;
+        transition:
+          background-color 0.2s,
+          transform 0.1s;
+      }
+
+      button:hover {
+        background-color: #ff4545;
+        transform: scale(1.05);
+      }
+
+      button:active {
+        transform: scale(0.95);
+      }
+
+      footer {
+        background-color: #050175;
+        gap: 20px;
+        display: flex;
+        height: 60px;
+        align-items: center;
+      }
+
+      a {
+        font-weight: bold;
+        font-size: 38px;
+
+        margin-top: 20px;
+        text-decoration: none;
+        color: white;
+      }
+
+      footer p {
+        position: absolute;
+        color: white;
+        right: 10px;
+      }
+    </style>
+    <title>Perfil</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="pagina-inicial.html">Página Inicial</a>
+      </nav>
+    </header>
+
+    <main>
+      <div id="div_bloco">
+        <h1 id="nome"></h1>
+        <h3 id="email"></h3>
+        <h3 id="ra"></h3>
+      </div>
+    </main>
+
+    <footer>
+      <p>Biblioteca Digital Fatec</p>
+    </footer>
+
+    <script>
+      async function buscarUsuario() {
+        const response = await fetch("/api/user/", {
+          method: "GET",
+          credentials: "include", 
+        });
+
+        return await response.json();
+      }
+
+      async function exibirPerfil() {
+        const usuario = await buscarUsuario();
+        console.log(usuario);
+
+        //Colocando os conteudos
+
+          const bloco = document.getElementById("div_bloco");
+          const nome = document.getElementById("nome");
+          const email = document.getElementById("email");
+          const ra = document.getElementById("ra");
+
+          nome.textContent = usuario.nome;
+          email.textContent = usuario.emailAcademico;
+          ra.textContent = usuario.registroAluno;
+
+    }
+
+      exibirPerfil()
+
+      
+    </script>
+  </body>
+</html>

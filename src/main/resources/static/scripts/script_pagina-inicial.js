@@ -40,14 +40,14 @@ ul_div_perfil.className = "ul_perfil";
 const li_div_perfil_INFORMACOESDACONTA = document.createElement("li");
 const a_li_perfil_INFORMACOESDACONTA = document.createElement("a");
 a_li_perfil_INFORMACOESDACONTA.textContent = "Informações da Conta";
-a_li_perfil_INFORMACOESDACONTA.href = ""; //Página da conta
+a_li_perfil_INFORMACOESDACONTA.href = "pagina_perfil.html"; //Página da conta
 li_div_perfil_INFORMACOESDACONTA.className = "li_perfil";
 li_div_perfil_INFORMACOESDACONTA.appendChild(a_li_perfil_INFORMACOESDACONTA);
 
 const li_div_perfil_LIVROSSALVOS = document.createElement("li");
 const a_li_perfilLIVROSSALVOS = document.createElement("a");
 a_li_perfilLIVROSSALVOS.textContent = "Lista de Salvos";
-a_li_perfilLIVROSSALVOS.href = "pagina_salvos.html"
+a_li_perfilLIVROSSALVOS.href = "pagina_salvos.html";  //Página de salvos
 li_div_perfil_LIVROSSALVOS.className = "li_perfil";
 li_div_perfil_LIVROSSALVOS.appendChild(a_li_perfilLIVROSSALVOS);
 
