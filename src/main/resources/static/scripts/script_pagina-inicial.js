@@ -280,7 +280,6 @@ btns_salvar.forEach(salvar => {
       await deletarLivrosSalvos(salvar.id);
       return;
     }
-      alert("Livro salvo com sucesso!");
       salvar.classList.add('salvo');
       await salvarLivro(salvar.id);
     } 

@@ -14,18 +14,23 @@
       }
 
       main {
-        margin-top: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
       
       #div_bloco {
         display: flex;
+        flex-direction: column;
         margin-bottom: 20px;
-        height: 200px;
+        height: 400px;
+        width: 60%;
         background-color: white;
         font-size: 20px;
 
         text-align: center;
         align-items: center;
+        align-content: center;
         padding: 0;
         box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.603);
         border-radius: 10px;
@@ -93,9 +98,17 @@
 
     <main>
       <div id="div_bloco">
-        <h1 id="nome"></h1>
-        <h3 id="email"></h3>
-        <h3 id="ra"></h3>
+
+        <h1 id="nome">Nome: </h1>
+        <br>
+        <h3 id="email">Email: </h3>
+        <br>
+        <h3 id="ra">RA: </h3>
+        <br>
+        <h3 id="reservasPendentes">Reservas Pendentes: </h3>
+        <br>
+        <h3 id="reservasTotais">Reservas Totais: </h3>
+
       </div>
     </main>
 
@@ -105,7 +118,7 @@
 
     <script>
       async function buscarUsuario() {
-        const response = await fetch("/api/user/", {
+        const response = await fetch("/api/user", {
           method: "GET",
           credentials: "include", 
         });
@@ -123,10 +136,15 @@
           const nome = document.getElementById("nome");
           const email = document.getElementById("email");
           const ra = document.getElementById("ra");
+          const reservasPendentes = document.getElementById("reservasPendentes");
+          const reservasTotais = document.getElementById("reservasTotais");
 
-          nome.textContent = usuario.nome;
-          email.textContent = usuario.emailAcademico;
-          ra.textContent = usuario.registroAluno;
+          nome.textContent += usuario.nome;
+          email.textContent += usuario.emailAcademico;
+          ra.textContent += usuario.registroAluno;
+          reservasPendentes.textContent += usuario.metricas.reservasPendentes;
+          reservasTotais.textContent += usuario.metricas.reservasTotais;
+
 
     }
 

@@ -12,6 +12,57 @@
         padding: 0;
         background-color: #f4f4f4;
       }
+      #btn_perfil {
+        background-image: url("../imgs/icone-perfil.png");
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        right: 50px;
+        z-index: 10;
+      }
+
+      #div_perfil {
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+        right: 30px;
+        top: 50px;
+        background-color: #949ba7;
+        box-shadow: 5px 5px 15px black;
+        border-radius: 10px;
+        width: 250px;
+        height: 500px;
+      }
+
+      .ul_perfil {
+        margin: auto;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .li_perfil
+      {
+        justify-content: center;
+        background-color: rgb(255, 255, 255);
+        border-radius: 10px;
+        padding: 10px;
+        margin: 10px;
+        width: 200px;
+        text-align: center;
+        box-shadow: 2px 4px 8px #00000044;
+        list-style-type: none;
+      }
+
+      .a_perfil
+      {
+        text-decoration: none;
+        color: black;
+      }
 
       main {
         margin: 60px auto;
@@ -19,7 +70,7 @@
       #div_main {
         display: flex;
         gap: 20px;
-        height: 500px;
+        height: 600px;
         background-color: white;
         font-size: 20px;
 
@@ -61,7 +112,8 @@
         border-radius: 10px;
       }
 
-      button {
+      .btn_salvar,
+      .btn_reservar {
         flex: 2;
         border-radius: 5px;
         justify-content: center;
@@ -78,7 +130,16 @@
         transition: background-color 0.5s ease;
       }
 
-      button:hover {
+      .btn_salvar:hover,
+      .btn_reservar:hover {
+        background-color: #080299;
+      }
+
+      .btn_salvar.salvo {
+        background-color: #080299;
+      }
+
+      .btn_reservar.reservado {
         background-color: #080299;
       }
 
@@ -90,7 +151,7 @@
         align-items: center;
       }
 
-      a {
+      #a_inicial {
         font-weight: bold;
         font-size: 38px;
 
@@ -109,7 +170,8 @@
   <body>
     <header>
       <nav>
-        <a href="pagina-inicial.html">Página Inicial</a>
+        <a href="pagina-inicial.html" id="a_inicial">Página Inicial</a>
+        <button id="btn_perfil"></button>
       </nav>
     </header>
 
@@ -125,69 +187,324 @@
     </footer>
 
     <script>
-      const livro = JSON.parse(localStorage.getItem("livroSelecionado"));
+      async function salvarLivro(id) {
+        const response = await fetch("/api/user/saved", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ id: id }),
+        });
+        const texto = await response.text();
+        return texto ? JSON.parse(texto) : null;
+      }
+      async function buscarLivrosSalvos() {
+        const response = await fetch("/api/user/saved", {
+          method: "GET",
+          credentials: "include",
+        });
 
-      if (livro) {
-        document.title = livro.nome;
-        const main = document.getElementById("div_main");
-        const div_img = document.getElementById("div_img");
-        const div_texto = document.getElementById("div_texto");
+        return await response.json();
+      }
+      async function deletarLivrosSalvos(id) {
+        const response = await fetch("/api/user/saved", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ id: id }),
+        });
 
-        //main.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),url('${livro.foto}')`;
-
-        const titulo = document.createElement("h1");
-        titulo.textContent = livro.nome;
-        div_texto.appendChild(titulo);
-
-        const sinopse = document.createElement("p");
-        sinopse.textContent = livro.sinopse;
-        sinopse.id = "sinopse";
-        div_texto.appendChild(sinopse);
-
-        const autor = document.createElement("p");
-        autor.textContent = `Autor: ${livro.autor}`;
-        autor.id = "autor";
-        div_texto.appendChild(autor);
-
-        const genero = document.createElement("p");
-        genero.textContent = `Gênero: ${livro.genero}`;
-        genero.id = "genero";
-        div_texto.appendChild(genero);
-
-        const status = document.createElement("p");
-        status.textContent = `Status: ${livro.status}`;
-        status.id = "status";
-        div_texto.appendChild(status);
-
-        const btn_salvar = document.createElement('button');
-        btn_salvar.id = "btn_salvar";
-        btn_salvar.textContent = "Salvar";
-
-        const btn_reservar = document.createElement('button');
-        btn_reservar.id = "btn_reservar";
-        btn_reservar.textContent = "Reservar";
-
-        div_texto.appendChild(btn_salvar);
-        div_texto.appendChild(btn_reservar);
-
-        const imagem = document.createElement("img");
-        imagem.src = livro.foto;
-        imagem.loading = "lazy";
-        imagem.alt = `Capa de ${livro.nome}`;
-        div_img.appendChild(imagem);
-        div_img.id = "div_img";
-
-        main.appendChild(div_texto);
-        main.appendChild(div_img);
-
-        if (status.textContent.toLowerCase() == "status: disponível") {
-          status.style.color = "green";
-        } else {
-          status.style.color = "red";
+        if (!response.ok) {
+          const texto = await response.text();
+          throw new Error(`Erro ${response.status}: ${texto}`);
         }
 
-        
+        return true;
       }
+
+      async function buscarReservas() {
+        const response = await fetch("/api/reservation", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        return await response.json();
+      }
+      async function buscarReservaEspecifica(id) {
+        const response = await fetch(`/api/reservation/${id}`, {
+          method: "GET",
+          credentials: "include",
+        });
+
+        return await response.json();
+      }
+      async function fazerReserva(id) {
+        const response = await fetch("api/reservation", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ bookId: id }),
+        });
+        const texto = await response.text();
+        return texto ? JSON.parse(texto) : null;
+      }
+
+      async function atualizarReserva(reservaId, modificacao) {
+        const response = await fetch(
+          `/api/reservation/${reservaId}/${modificacao}`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+          },
+        );
+        const texto = await response.text();
+        return texto ? JSON.parse(texto) : null;
+      }
+
+      const livro = JSON.parse(localStorage.getItem("livroSelecionado"));
+
+      async function main() {
+        const livrossalvos = await buscarLivrosSalvos();
+        const livros_reservados = await buscarReservas();
+
+        //BOTÃO PERFIL
+        const body = document.body;
+        const nav = document.querySelector("nav");
+        const btn_perfil = document.getElementById("btn_perfil");
+
+        btn_perfil.addEventListener("click", () => {
+          const elemento = document.getElementById("div_perfil");
+          if (!elemento) {
+            const div_perfil = document.createElement("div");
+            div_perfil.id = "div_perfil";
+
+            div_perfil.appendChild(btn_perfil);
+            btn_perfil.style.right = "auto";
+            btn_perfil.style.marginTop = "20px";
+
+            //Dentro da div de perfil
+            const ul_div_perfil = document.createElement("ul");
+            ul_div_perfil.className = "ul_perfil";
+
+            const li_div_perfil_INFORMACOESDACONTA = document.createElement("li");
+            const a_li_perfil_INFORMACOESDACONTA = document.createElement("a");
+            a_li_perfil_INFORMACOESDACONTA.textContent = "Informações da Conta";
+            a_li_perfil_INFORMACOESDACONTA.href = "pagina_perfil.html"; //Página da conta
+            a_li_perfil_INFORMACOESDACONTA.className = "a_perfil";
+            li_div_perfil_INFORMACOESDACONTA.className = "li_perfil";
+            li_div_perfil_INFORMACOESDACONTA.appendChild(
+              a_li_perfil_INFORMACOESDACONTA,
+            );
+
+            const li_div_perfil_LIVROSSALVOS = document.createElement("li");
+            const a_li_perfilLIVROSSALVOS = document.createElement("a");
+            a_li_perfilLIVROSSALVOS.textContent = "Lista de Salvos";
+            a_li_perfilLIVROSSALVOS.href = "pagina_salvos.html"; //Página de salvos
+            a_li_perfil_INFORMACOESDACONTA.className = "a_perfil";
+            li_div_perfil_LIVROSSALVOS.className = "li_perfil";
+            li_div_perfil_LIVROSSALVOS.appendChild(a_li_perfilLIVROSSALVOS);
+
+            //Adicionando os li's na ul
+            ul_div_perfil.appendChild(li_div_perfil_INFORMACOESDACONTA);
+            ul_div_perfil.appendChild(li_div_perfil_LIVROSSALVOS);
+
+            //Adicionando a ul à div perfil
+            div_perfil.appendChild(ul_div_perfil);
+
+            body.appendChild(div_perfil);
+          } else {
+            nav.appendChild(btn_perfil);
+            btn_perfil.style.right = "50px";
+            btn_perfil.style.marginTop = "0";
+
+            elemento.remove();
+          }
+        });
+
+        const ids_livros_salvos = new Set(livrossalvos.map((li) => li.id));
+        const livro_reservado = livros_reservados.find(l => l.livro.id === livro.id);
+        const ids_livros_reservados = new Set(
+          livros_reservados.map((l) => l.livro.id),
+        );
+        
+
+        if (livro) {
+          document.title = livro.nome;
+          console.log(ids_livros_reservados, "\n", livro_reservado);
+          const main = document.getElementById("div_main");
+          const div_img = document.getElementById("div_img");
+          const div_texto = document.getElementById("div_texto");
+
+          //main.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),url('${livro.foto}')`;
+
+          const titulo = document.createElement("h1");
+          titulo.textContent = livro.nome;
+          div_texto.appendChild(titulo);
+
+          const sinopse = document.createElement("p");
+          sinopse.textContent = `Sinopse: ${livro.sinopse}`;
+          sinopse.id = "sinopse";
+          div_texto.appendChild(sinopse);
+
+          const autor = document.createElement("p");
+          autor.textContent = `Autor: ${livro.autor}`;
+          autor.id = "autor";
+          div_texto.appendChild(autor);
+
+          const genero = document.createElement("p");
+          genero.textContent = `Gênero: ${livro.genero}`;
+          genero.id = "genero";
+          div_texto.appendChild(genero);
+
+          const paginas = document.createElement("p");
+          paginas.textContent = `Páginas: ${livro.paginas}`;
+          paginas.id = "paginas";
+          div_texto.appendChild(paginas);
+
+          const editora = document.createElement("p");
+          editora.textContent = `Editora: ${livro.editora}`;
+          editora.id = "editora";
+          div_texto.appendChild(editora);
+
+          const ano = document.createElement("p");
+          ano.textContent = `Ano de publicação: ${livro.ano}`;
+          ano.id = "ano";
+          div_texto.appendChild(ano);
+
+          const status = document.createElement("p");
+          status.textContent = `Status: ${livro.status}`;
+          status.id = "status";
+          div_texto.appendChild(status);
+
+          const btn_salvar = document.createElement("button");
+          btn_salvar.className = "btn_salvar";
+          btn_salvar.textContent = "Salvar";
+
+          const btn_reservar = document.createElement("button");
+          btn_reservar.className = "btn_reservar";
+          btn_reservar.textContent = "Reservar";
+
+          div_texto.appendChild(btn_salvar);
+          div_texto.appendChild(btn_reservar);
+
+          const imagem = document.createElement("img");
+          imagem.src = livro.foto;
+          imagem.loading = "lazy";
+          imagem.alt = `Capa de ${livro.nome}`;
+          div_img.appendChild(imagem);
+          div_img.id = "div_img";
+
+          main.appendChild(div_texto);
+          main.appendChild(div_img);
+
+          if (status.textContent.toLowerCase() == "status: disponível") {
+            status.style.color = "green";
+          } else {
+            status.style.color = "red";
+          }
+
+          // Funcionamento do botão de SALVAR
+          if (ids_livros_salvos.has(livro.id)) {
+            btn_salvar.classList.add("salvo");
+          }
+
+          if (btn_salvar.classList.contains("salvo")) {
+            btn_salvar.textContent = "Salvo";
+          } else {
+            btn_salvar.textContent = "Salvar";
+          }
+
+          btn_salvar.addEventListener("click", async () => {
+            if (btn_salvar.classList.contains("salvo")) {
+              //Se o livro já estiver salvo e clicar
+              btn_salvar.classList.remove("salvo");
+              btn_salvar.textContent = "Salvar";
+
+              await deletarLivrosSalvos(livro.id);
+              return;
+            }
+            // Se não estiver salvo e clicar
+            btn_salvar.classList.add("salvo");
+            btn_salvar.textContent = "Salvo";
+            await salvarLivro(livro.id);
+          });
+
+          // Funcionamento do botão de RESERVAR
+          if (ids_livros_reservados.has(livro.id))
+           {
+            if(livro_reservado.reservaStatus === 'EM_ANDAMENTO' || livro_reservado.reservaStatus === 'AGUARDANDO_RETIRADA')
+            btn_reservar.classList.add("reservado");
+          }
+
+          if (btn_reservar.classList.contains("reservado")) {
+            btn_reservar.textContent = "Reservado";
+          } else {
+            btn_reservar.textContent = "Reservar";
+          }
+
+
+          btn_reservar.addEventListener("click", async () => {
+            if (
+              status.textContent.toLowerCase() == "status: disponível"
+            ) //Verificando se o livro está disponível primeiramente
+            {
+              if (btn_reservar.classList.contains("reservado")) //Verificando se o livro está reservado ou não
+              {
+                //Se o livro já estiver reservado e clicar
+                btn_reservar.classList.remove("reservado");
+                btn_reservar.textContent = "Reservar";
+
+                if (document.getElementById("calendario")){
+                  document.getElementById("calendario").remove();
+                }
+
+                //SE QUISER FAZER UMA VERIFICAÇÃO ANTES DE CANCELAR É AQUI--------------
+
+                //----------------------
+                alert("Reserva Cancelada com sucesso");
+                await atualizarReserva(livro_reservado.reservaId, "cancel");
+
+                return;
+              }
+              // Se não estiver reservado e clicar
+              const calendario = document.createElement("input");
+              calendario.id = "calendario";
+              calendario.type = "date";
+              main.appendChild(calendario);
+            } 
+            else {
+              alert(
+                "Não é possível reservar o livro pois o mesmo está indisponível",
+              );
+            }
+
+            function hojeFormatado() {
+              const hoje = new Date();
+              const ano = hoje.getFullYear();
+              const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+              const dia = String(hoje.getDate()).padStart(2, "0");
+              return `${ano}-${mes}-${dia}`;
+            }
+
+            document.querySelector("#calendario").min = hojeFormatado();
+
+            document.getElementById("calendario").addEventListener("change", async (e) => {
+
+                console.log(livro_reservado.reservaStatus);
+                     
+                btn_reservar.classList.add("reservado");
+                btn_reservar.textContent = "Reservado";
+                alert(`O livro ${livro.nome} foi reservado com sucesso para ser buscado no dia ${e.target.value}`);
+                if (document.getElementById("calendario")){
+                  document.getElementById("calendario").remove();
+                }
+                await fazerReserva(livro.id);
+              });
+          });
+        }
+      }
+
+      main();
     </script>
   </body>
 </html>

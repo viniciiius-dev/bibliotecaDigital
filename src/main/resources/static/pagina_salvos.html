@@ -13,6 +13,58 @@
         background-color: #f4f4f4;
       }
 
+      #btn_perfil {
+        background-image: url("../imgs/icone-perfil.png");
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        right: 50px;
+        z-index: 10;
+      }
+
+      #div_perfil {
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+        right: 30px;
+        top: 50px;
+        background-color: #949ba7;
+        box-shadow: 5px 5px 15px black;
+        border-radius: 10px;
+        width: 250px;
+        height: 500px;
+      }
+
+      .ul_perfil {
+        margin: auto;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .li_perfil
+      {
+        justify-content: center;
+        background-color: rgb(255, 255, 255);
+        border-radius: 10px;
+        padding: 10px;
+        margin: 10px;
+        width: 200px;
+        text-align: center;
+        box-shadow: 2px 4px 8px #00000044;
+        list-style-type: none;
+      }
+
+      .a_perfil
+      {
+        text-decoration: none;
+        color: black;
+      }
+
       main {
         margin-top: 60px;
       }
@@ -61,7 +113,7 @@
         border-radius: 10px;
       }
 
-      button {
+      .btn_excluir {
         width: 40px;
         height: 40px;
         border-radius: 50%;
@@ -79,12 +131,12 @@
           transform 0.1s;
       }
 
-      button:hover {
+      .btn_excluir:hover {
         background-color: #ff4545;
         transform: scale(1.05);
       }
 
-      button:active {
+      .btn_excluir:active {
         transform: scale(0.95);
       }
 
@@ -96,7 +148,7 @@
         align-items: center;
       }
 
-      a {
+      #a_inicial {
         font-weight: bold;
         font-size: 38px;
 
@@ -116,7 +168,8 @@
   <body>
     <header>
       <nav>
-        <a href="pagina-inicial.html">Página Inicial</a>
+        <a href="pagina-inicial.html" id="a_inicial">Página Inicial</a>
+        <button id="btn_perfil"></button>
       </nav>
     </header>
 
@@ -132,6 +185,60 @@
     </footer>
 
     <script>
+      //BOTÃO PERFIL
+        const body = document.body;
+        const nav = document.querySelector("nav");
+        const btn_perfil = document.getElementById("btn_perfil");
+
+        btn_perfil.addEventListener("click", () => {
+          const elemento = document.getElementById("div_perfil");
+          if (!elemento) {
+            const div_perfil = document.createElement("div");
+            div_perfil.id = "div_perfil";
+
+            div_perfil.appendChild(btn_perfil);
+            btn_perfil.style.right = "auto";
+            btn_perfil.style.marginTop = "20px";
+
+            //Dentro da div de perfil
+            const ul_div_perfil = document.createElement("ul");
+            ul_div_perfil.className = "ul_perfil";
+
+            const li_div_perfil_INFORMACOESDACONTA = document.createElement("li");
+            const a_li_perfil_INFORMACOESDACONTA = document.createElement("a");
+            a_li_perfil_INFORMACOESDACONTA.textContent = "Informações da Conta";
+            a_li_perfil_INFORMACOESDACONTA.href = "pagina_perfil.html"; //Página da conta
+            a_li_perfil_INFORMACOESDACONTA.className = "a_perfil";
+            li_div_perfil_INFORMACOESDACONTA.className = "li_perfil";
+            li_div_perfil_INFORMACOESDACONTA.appendChild(
+              a_li_perfil_INFORMACOESDACONTA,
+            );
+
+            const li_div_perfil_LIVROSSALVOS = document.createElement("li");
+            const a_li_perfilLIVROSSALVOS = document.createElement("a");
+            a_li_perfilLIVROSSALVOS.textContent = "Lista de Salvos";
+            a_li_perfilLIVROSSALVOS.href = "pagina_salvos.html"; //Página de salvos
+            a_li_perfil_INFORMACOESDACONTA.className = "a_perfil";
+            li_div_perfil_LIVROSSALVOS.className = "li_perfil";
+            li_div_perfil_LIVROSSALVOS.appendChild(a_li_perfilLIVROSSALVOS);
+
+            //Adicionando os li's na ul
+            ul_div_perfil.appendChild(li_div_perfil_INFORMACOESDACONTA);
+            ul_div_perfil.appendChild(li_div_perfil_LIVROSSALVOS);
+
+            //Adicionando a ul à div perfil
+            div_perfil.appendChild(ul_div_perfil);
+
+            body.appendChild(div_perfil);
+          } else {
+            nav.appendChild(btn_perfil);
+            btn_perfil.style.right = "50px";
+            btn_perfil.style.marginTop = "0";
+
+            elemento.remove();
+          }
+        });
+
       async function buscarLivrosSalvos() {
         const response = await fetch("/api/user/saved", {
           method: "GET",
