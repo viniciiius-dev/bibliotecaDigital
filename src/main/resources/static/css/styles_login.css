@@ -1,5 +1,13 @@
 @charset "utf-8";
-
+:root{
+    --azulbase:#005C6D;
+    --azulhover: #004854;
+    --vermelhobotao:#B20000;
+    --cianotags:#00C1CF;
+    --fundogeral: #F8FAFC;
+    --brancodestaque:#FFFFFF;
+    --hcurtos:#1E293B;
+}
 * {
     margin: 0;
     padding: 0;
@@ -28,8 +36,8 @@ main {
 section#login {
     width: 50vw;
     height: 100vh;
-    background-color: rgba(240, 239, 239, 0.9);
-    box-shadow: 2px 0px 10px rgb(190, 190, 190);
+    background-color: var(--brancodestaque);
+    box-shadow: 2px 0px 10px var(--fundogeral);
     
     display: flex;
     flex-direction: column;
@@ -57,7 +65,7 @@ section#login > div#formulario {
     height: 60%;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: var(--brancodestaque);
     border-radius: 10px;
     align-content: center;
 }
@@ -65,7 +73,7 @@ section#login > div#formulario {
 div#formulario > h1 {
     text-align: center;
     margin-bottom: 30px;
-    color: rgb(255, 0, 0);
+    color: var(--azulbase);
     font-size: 2rem;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 
@@ -75,7 +83,7 @@ div#formulario > h1 {
     font-size: 1.3rem;
     text-align: center;
     margin-bottom: 50px;
-    color: rgb(255, 47, 47);
+    color: var(--azulbase);
 }
 
 div.campo {
@@ -119,8 +127,8 @@ input[type=submit] {
     height: 40px;
     border: none;
     transition: 0.4s;
-    background-color: black;
-    color: white;
+    background-color: var(--vermelhobotao);
+    color: var(--brancodestaque);
     cursor: pointer;
     font-weight: bold;
     margin-top: 10px;
@@ -128,7 +136,7 @@ input[type=submit] {
 }
 
 input[type=submit]:hover {
-    background-color: #080299;
+    background-color: #004854;
 }
 
 .botao {
