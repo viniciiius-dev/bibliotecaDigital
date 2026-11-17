@@ -322,7 +322,15 @@
         });
 
         const ids_livros_salvos = new Set(livrossalvos.map((li) => li.id));
-        const livro_reservado = livros_reservados.find(l => l.livro.id === livro.id);
+
+        let livro_reservado = livros_reservados.find(
+                l =>
+                        l.livro.id === livro.id &&
+                        (
+                                l.reservaStatus === "AGUARDANDO_RETIRADA" ||
+                                l.reservaStatus === "EM_ANDAMENTO"
+                        )
+        );
         const ids_livros_reservados = new Set(
           livros_reservados.map((l) => l.livro.id),
         );
@@ -430,9 +438,7 @@
           });
 
           // Funcionamento do botão de RESERVAR
-          if (ids_livros_reservados.has(livro.id))
-           {
-            if(livro_reservado.reservaStatus === 'EM_ANDAMENTO' || livro_reservado.reservaStatus === 'AGUARDANDO_RETIRADA')
+          if (livro_reservado) {
             btn_reservar.classList.add("reservado");
           }
 
@@ -461,8 +467,14 @@
                 //SE QUISER FAZER UMA VERIFICAÇÃO ANTES DE CANCELAR É AQUI--------------
 
                 //----------------------
-                alert("Reserva Cancelada com sucesso");
-                await atualizarReserva(livro_reservado.reservaId, "cancel");
+                try {
+                  await atualizarReserva(livro_reservado.reservaId, "cancel");
+                  alert("Reserva Cancelada com sucesso");
+
+                }  catch (e){
+                  console.log(e)
+                  alert("deu merda fiote")
+                }
 
                 return;
               }
@@ -488,10 +500,20 @@
 
             document.querySelector("#calendario").min = hojeFormatado();
 
-            document.getElementById("calendario").addEventListener("change", async (e) => {
+            document.getElementById("calendario").addEventListener("change", async (e) => {try {
+              livro_reservado = await fazerReserva(livro.id);
 
-                console.log(livro_reservado.reservaStatus);
-                     
+              btn_reservar.classList.add("reservado");
+              btn_reservar.textContent = "Reservado";
+
+              alert(`O livro ${livro.nome} foi reservado com sucesso para ser buscado no dia ${e.target.value}`);
+
+              document.getElementById("calendario").remove();
+
+            } catch (erro) {
+
+
+
                 btn_reservar.classList.add("reservado");
                 btn_reservar.textContent = "Reservado";
                 alert(`O livro ${livro.nome} foi reservado com sucesso para ser buscado no dia ${e.target.value}`);
@@ -499,6 +521,9 @@
                   document.getElementById("calendario").remove();
                 }
                 await fazerReserva(livro.id);
+              console.log(erro);
+              alert("Não foi possível realizar a reserva.");
+            }
               });
           });
         }
