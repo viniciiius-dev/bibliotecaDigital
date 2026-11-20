@@ -1,0 +1,482 @@
+
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./css/styles_pagina-inicial.css" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    #btn_perfil {
+      background-image: url("imgs/icone-perfil.png");
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: none;
+      right: 50px;
+      z-index: 10;
+    }
+
+    #div_perfil {
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+      right: 30px;
+      top: 50px;
+      background-color: #949ba7;
+      box-shadow: 5px 5px 15px black;
+      border-radius: 10px;
+      width: 250px;
+      height: 500px;
+    }
+
+    .ul_perfil {
+      margin: auto;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .li_perfil {
+      justify-content: center;
+      background-color: white;
+      border-radius: 10px;
+      padding: 10px;
+      margin: 10px;
+      width: 200px;
+      text-align: center;
+      box-shadow: 2px 4px 8px #00000044;
+      list-style-type: none;
+    }
+
+    .a_perfil {
+      text-decoration: none;
+      color: black;
+    }
+
+    main {
+      margin-top: 60px;
+    }
+
+    .div_bloco {
+      display: flex;
+      margin-bottom: 20px;
+      height: 200px;
+      background-color: white;
+      font-size: 20px;
+      text-align: center;
+      align-items: center;
+      padding: 0;
+      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.603);
+      border-radius: 10px;
+      background-size: cover;
+    }
+
+    .div_texto {
+      flex: 3;
+      min-width: 0;
+    }
+
+    .div_img {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      height: 100%;
+      flex: 2;
+      min-width: 0;
+      background-color: rgba(4, 0, 116, 0.849);
+      padding: 0;
+    }
+
+    .div_img img {
+      height: 90%;
+      max-width: 100%;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .div_acoes {
+      flex: 0 0 150px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .btn_excluir {
+      padding: 10px 14px;
+      border-radius: 8px;
+      background-color: #dc2626;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition:
+              background-color 0.2s,
+              transform 0.1s;
+    }
+
+    .btn_excluir:hover {
+      background-color: #991b1b;
+      transform: scale(1.05);
+    }
+
+    .btn_excluir:active {
+      transform: scale(0.95);
+    }
+
+    footer {
+      background-color: #050175;
+      gap: 20px;
+      display: flex;
+      height: 60px;
+      align-items: center;
+    }
+
+    #a_inicial {
+      font-weight: bold;
+      font-size: 38px;
+      margin-top: 20px;
+      text-decoration: none;
+      color: white;
+    }
+
+    footer p {
+      position: absolute;
+      color: white;
+      right: 10px;
+    }
+  </style>
+
+  <title>Livros Reservados</title>
+</head>
+
+<body>
+<header>
+  <nav>
+    <a href="pagina-inicial.html" id="a_inicial">Página Inicial</a>
+    <button id="btn_perfil"></button>
+  </nav>
+</header>
+
+<main>
+  <select id="filtro-status">
+    <option value="TODOS">Todas as reservas</option>
+    <option value="AGUARDANDO_RETIRADA">Aguardando retirada</option>
+    <option value="EM_ANDAMENTO">Em andamento</option>
+    <option value="DEVOLVIDO">Devolvido</option>
+    <option value="CANCELADO">Cancelado</option>
+    <option value="EXPIRADO">Expirado</option>
+  </select>
+
+  <select id="ordenacao-data">
+    <option value="ASC">Expiração mais próxima</option>
+    <option value="DESC">Expiração mais distante</option>
+  </select>
+
+  <div id="lista-reservas"></div>
+</main>
+
+<footer>
+  <p>Biblioteca Digital Fatec</p>
+</footer>
+
+<script>
+  // BOTÃO PERFIL
+  const body = document.body;
+  const nav = document.querySelector("nav");
+  const btn_perfil = document.getElementById("btn_perfil");
+
+  btn_perfil.addEventListener("click", () => {
+    const elemento = document.getElementById("div_perfil");
+
+    if (!elemento) {
+      const div_perfil = document.createElement("div");
+      div_perfil.id = "div_perfil";
+
+      div_perfil.appendChild(btn_perfil);
+      btn_perfil.style.right = "auto";
+      btn_perfil.style.marginTop = "20px";
+
+      const ul_div_perfil = document.createElement("ul");
+      ul_div_perfil.className = "ul_perfil";
+
+      const li_div_perfil_INFORMACOESDACONTA = document.createElement("li");
+      const a_li_perfil_INFORMACOESDACONTA = document.createElement("a");
+
+      a_li_perfil_INFORMACOESDACONTA.textContent = "Informações da Conta";
+      a_li_perfil_INFORMACOESDACONTA.href = "pagina_perfil.html";
+      a_li_perfil_INFORMACOESDACONTA.className = "a_perfil";
+
+      li_div_perfil_INFORMACOESDACONTA.className = "li_perfil";
+      li_div_perfil_INFORMACOESDACONTA.appendChild(
+              a_li_perfil_INFORMACOESDACONTA
+      );
+
+      const li_div_perfil_LIVROSSALVOS = document.createElement("li");
+      const a_li_perfilLIVROSSALVOS = document.createElement("a");
+
+      a_li_perfilLIVROSSALVOS.textContent = "Lista de Salvos";
+      a_li_perfilLIVROSSALVOS.href = "pagina_salvos.html";
+      a_li_perfilLIVROSSALVOS.className = "a_perfil";
+
+      li_div_perfil_LIVROSSALVOS.className = "li_perfil";
+      li_div_perfil_LIVROSSALVOS.appendChild(a_li_perfilLIVROSSALVOS);
+
+      const li_div_perfil_RESERVADOS = document.createElement("li");
+      const a_li_perfilRESERVADOS = document.createElement("a");
+
+      a_li_perfilRESERVADOS.textContent = "Livros Reservados";
+      a_li_perfilRESERVADOS.href = "pagina_reservados.html";
+      a_li_perfilRESERVADOS.className = "a_perfil";
+
+      li_div_perfil_RESERVADOS.className = "li_perfil";
+      li_div_perfil_RESERVADOS.appendChild(a_li_perfilRESERVADOS);
+
+      ul_div_perfil.appendChild(li_div_perfil_INFORMACOESDACONTA);
+      ul_div_perfil.appendChild(li_div_perfil_LIVROSSALVOS);
+      ul_div_perfil.appendChild(li_div_perfil_RESERVADOS);
+
+      div_perfil.appendChild(ul_div_perfil);
+      body.appendChild(div_perfil);
+
+    } else {
+      nav.appendChild(btn_perfil);
+      btn_perfil.style.right = "50px";
+      btn_perfil.style.marginTop = "0";
+
+      elemento.remove();
+    }
+  });
+
+
+  // BUSCAR RESERVAS
+  async function buscarReservas() {
+    const response = await fetch("/api/reservation", {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro ao buscar reservas: ${response.status}`);
+    }
+
+    return await response.json();
+  }
+
+
+  // CANCELAR RESERVA
+  async function cancelarReserva(reservaId) {
+    const response = await fetch(`/api/reservation/${reservaId}/cancel`, {
+      method: "PATCH",
+      credentials: "include"
+    });
+
+    if (!response.ok) {
+      const texto = await response.text();
+      throw new Error(
+              `Erro ao cancelar reserva: ${response.status} - ${texto}`
+      );
+    }
+
+    return true;
+  }
+
+
+  // CARREGAR RESERVAS
+  let todasReservas = [];
+
+  async function carregarReservas() {
+    try {
+      todasReservas = await buscarReservas();
+      atualizarExibicao();
+    } catch (e) {
+      console.error("Erro ao carregar reservas:", e);
+    }
+  }
+
+
+  // EXIBIR RESERVAS
+  function exibirReservas(reservasParaExibir) {
+    const main = document.querySelector("#lista-reservas");
+    main.innerHTML = "";
+
+    console.log(reservasParaExibir);
+
+    for (let i = 0; i < reservasParaExibir.length; i++) {
+      const div_bloco = document.createElement("div");
+      const div_img = document.createElement("div");
+      const div_texto = document.createElement("div");
+      const div_acoes = document.createElement("div");
+
+      // Classes e identificadores
+      div_bloco.className = "div_bloco";
+      div_bloco.id = reservasParaExibir[i].reservaId;
+
+      div_img.className = "div_img";
+      div_texto.className = "div_texto";
+      div_acoes.className = "div_acoes";
+
+      // Título
+      const titulo = document.createElement("h1");
+      titulo.textContent = reservasParaExibir[i].livro.nome;
+      div_texto.appendChild(titulo);
+
+      // Autor
+      const autor = document.createElement("p");
+      autor.textContent = `Autor: ${reservasParaExibir[i].livro.autor}`;
+      autor.id = "autor";
+      div_texto.appendChild(autor);
+
+      // Status
+      const status = document.createElement("p");
+      status.textContent = `Status: ${reservasParaExibir[i].reservaStatus}`;
+      status.id = "status";
+      div_texto.appendChild(status);
+
+      // Data de expiração
+      if (
+              reservasParaExibir[i].reservaStatus === "AGUARDANDO_RETIRADA" ||
+              reservasParaExibir[i].reservaStatus === "EM_ANDAMENTO"
+      ) {
+        const dataExpiracao = document.createElement("p");
+        const data = new Date(reservasParaExibir[i].DataExpiracao);
+
+        dataExpiracao.textContent =
+                `Expira em: ${data.toLocaleString("pt-BR")}`;
+
+        div_texto.appendChild(dataExpiracao);
+      }
+
+      // Imagem
+      const imagem = document.createElement("img");
+      imagem.src = reservasParaExibir[i].livro.foto;
+      imagem.loading = "lazy";
+      imagem.alt = `Capa de ${reservasParaExibir[i].livro.nome}`;
+
+      div_img.appendChild(imagem);
+
+      // Botão de cancelamento
+      if (reservasParaExibir[i].reservaStatus === "AGUARDANDO_RETIRADA") {
+        const btn_excluir = document.createElement("button");
+
+        btn_excluir.className = "btn_excluir";
+        btn_excluir.textContent = "Cancelar reserva";
+
+        btn_excluir.addEventListener("click", async () => {
+          const reservaId = reservasParaExibir[i].reservaId;
+
+          if (!confirm("Deseja realmente cancelar esta reserva?")) {
+            return;
+          }
+
+          try {
+            await cancelarReserva(reservaId);
+
+            todasReservas = await buscarReservas();
+            atualizarExibicao();
+
+            alert("Reserva cancelada com sucesso!");
+
+          } catch (e) {
+            console.error("Erro ao cancelar reserva:", e);
+            alert("Não foi possível cancelar a reserva.");
+          }
+        });
+
+        div_acoes.appendChild(btn_excluir);
+      }
+
+      // Adicionando as três áreas ao card
+      div_bloco.appendChild(div_texto);
+      div_bloco.appendChild(div_img);
+      div_bloco.appendChild(div_acoes);
+
+      main.appendChild(div_bloco);
+
+      // Cor do status
+      const statusAtual = reservasParaExibir[i].reservaStatus;
+
+      if (statusAtual === "AGUARDANDO_RETIRADA") {
+        status.style.color = "#d97706"; // Laranja
+      } else if (statusAtual === "EM_ANDAMENTO") {
+        status.style.color = "#2563eb"; // Azul
+      } else if (statusAtual === "DEVOLVIDO") {
+        status.style.color = "green";
+      } else if (statusAtual === "CANCELADO") {
+        status.style.color = "red";
+      } else if (statusAtual === "EXPIRADO") {
+        status.style.color = "#777777"; // Cinza
+      }
+    }
+  }
+
+
+  // FILTRAR E ORDENAR RESERVAS
+  function atualizarExibicao() {
+    const filtro = document.querySelector("#filtro-status").value;
+    const ordenacao = document.querySelector("#ordenacao-data").value;
+
+    let reservasFiltradas = todasReservas;
+
+    if (filtro !== "TODOS") {
+      reservasFiltradas = todasReservas.filter(reserva =>
+              reserva.reservaStatus === filtro
+      );
+    }
+
+    reservasFiltradas = [...reservasFiltradas].sort((a, b) => {
+      const statusAtivos = [
+        "AGUARDANDO_RETIRADA",
+        "EM_ANDAMENTO"
+      ];
+
+      const aAtiva = statusAtivos.includes(a.reservaStatus);
+      const bAtiva = statusAtivos.includes(b.reservaStatus);
+
+      // Reservas ativas aparecem primeiro
+      if (aAtiva && !bAtiva) return -1;
+      if (!aAtiva && bAtiva) return 1;
+
+      // Reservas inativas mantêm a ordem original
+      if (!aAtiva && !bAtiva) return 0;
+
+      // Ordena reservas ativas pela data
+      const dataA = new Date(a.DataExpiracao);
+      const dataB = new Date(b.DataExpiracao);
+
+      if (ordenacao === "ASC") {
+        return dataA - dataB;
+      }
+
+      return dataB - dataA;
+    });
+
+    exibirReservas(reservasFiltradas);
+  }
+
+
+  // EVENTOS DOS FILTROS
+  document.querySelector("#filtro-status")
+          .addEventListener("change", atualizarExibicao);
+
+  document.querySelector("#ordenacao-data")
+          .addEventListener("change", atualizarExibicao);
+
+
+  // INICIALIZAÇÃO
+  carregarReservas();
+
+</script>
+</body>
+</html>

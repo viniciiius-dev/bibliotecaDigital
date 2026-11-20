@@ -16,6 +16,8 @@ import com.viniciiiusdev.fateclivros.service.ReservationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -57,7 +59,9 @@ public class ReservationServiceImpl implements ReservationService {
     public List<ReservedBookDTO> getReservationsByUser() {
         User user = authenticatedUserService.getAuthenticatedUser();
         List<Reservation> reservations = reservationRepository.findByUser(user);
-        return reservationMapper.mapToReservedBooks(reservations);
+        List<ReservedBookDTO> mappedReservations = reservationMapper.mapToReservedBooks(reservations);
+        mappedReservations.sort((r1, r2)-> r1.reservaStatus().compareTo(r2.reservaStatus()));
+        return mappedReservations;
     }
 
 

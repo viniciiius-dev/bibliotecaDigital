@@ -304,9 +304,21 @@
             li_div_perfil_LIVROSSALVOS.className = "li_perfil";
             li_div_perfil_LIVROSSALVOS.appendChild(a_li_perfilLIVROSSALVOS);
 
+            //PAGINA DE RESERVADOS
+            const li_div_perfil_RESERVADOS = document.createElement("li");
+            const a_li_perfilRESERVADOS = document.createElement("a");
+
+            a_li_perfilRESERVADOS.textContent = "Livros Reservados";
+            a_li_perfilRESERVADOS.href = "pagina_reservados.html";
+            a_li_perfilRESERVADOS.className = "a_perfil";
+
+            li_div_perfil_RESERVADOS.className = "li_perfil";
+            li_div_perfil_RESERVADOS.appendChild(a_li_perfilRESERVADOS);
+
             //Adicionando os li's na ul
             ul_div_perfil.appendChild(li_div_perfil_INFORMACOESDACONTA);
             ul_div_perfil.appendChild(li_div_perfil_LIVROSSALVOS);
+            ul_div_perfil.appendChild(li_div_perfil_RESERVADOS);
 
             //Adicionando a ul à div perfil
             div_perfil.appendChild(ul_div_perfil);
